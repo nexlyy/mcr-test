@@ -1,1 +1,111 @@
+/* === BASE: variables, reset, theme, fonts === */
+/* THEME VARIABLES */
+:root {
+  --gold:#c9a84c; --mine:#c9a84c; --construction:#4a7fa5; --recycling:#5a9e6f; --new:#7a7a7a;
+  --nav-h:68px;
+  --bg:#0a0a0a; --bg-nav:rgba(10,10,10,0.95); --surface:#121212;
+  --text:#f0ede6; --text-2:rgba(240,237,230,0.65); --text-3:rgba(240,237,230,0.38);
+  --border:rgba(240,237,230,0.08); --border-h:rgba(201,168,76,0.35); --card-h:rgba(240,237,230,0.02);
+}
+html.light {
+  --bg:#f0ede6; --bg-nav:rgba(240,237,230,0.97); --surface:#e8e4dc;
+  --text:#0d0d0d; --text-2:#1e1e1e; --text-3:#555555;
+  --border:rgba(0,0,0,0.13); --border-h:rgba(201,168,76,0.6); --card-h:rgba(0,0,0,0.03);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html{font-size:16px;}
+body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;font-weight:400;overflow-x:hidden;-webkit-font-smoothing:antialiased;-webkit-transition:background 0.3s,color 0.3s;transition:background 0.3s,color 0.3s;}
 
+/* LOADING — используем display:none сразу после fade, не зависим от CSS переменных */
+#loading{
+  position:fixed;
+  top:0;left:0;right:0;bottom:0;
+  background:#0a0a0a;
+  display:-webkit-box;display:-webkit-flex;display:flex;
+  -webkit-box-align:center;-webkit-align-items:center;align-items:center;
+  -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;
+  z-index:9999;
+  -webkit-transition:opacity 0.45s ease;transition:opacity 0.45s ease;
+}
+#loading.fade{opacity:0;pointer-events:none;}
+.loading-logo{
+  font-family:'Libre Baskerville',serif;
+  font-size:2rem;font-weight:600;letter-spacing:.35em;
+  color:#c9a84c;text-transform:uppercase;
+  -webkit-animation:ldpulse 1.2s ease infinite;animation:ldpulse 1.2s ease infinite;
+}
+@-webkit-keyframes ldpulse{0%,100%{opacity:0.4}50%{opacity:1}}
+@keyframes ldpulse{0%,100%{opacity:0.4}50%{opacity:1}}
+
+/* NAV */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  display:-webkit-box;display:-webkit-flex;display:flex;
+  -webkit-box-align:center;-webkit-align-items:center;align-items:center;
+  -webkit-box-pack:justify;-webkit-justify-content:space-between;justify-content:space-between;
+  height:var(--nav-h);padding:0 52px;
+  background:var(--bg-nav);
+  -webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--border);
+}
+.nav-logo{font-family:'Libre Baskerville',serif;font-size:1.3rem;font-weight:600;letter-spacing:.3em;color:var(--gold) !important;text-transform:uppercase;text-decoration:none;cursor:pointer;background:none;border:none;padding:0;}
+.nav-center{display:-webkit-box;display:-webkit-flex;display:flex;list-style:none;}
+.nav-center li{margin-right:36px;}
+.nav-center li:last-child{margin-right:0;}
+.nav-center a{color:var(--text-2);text-decoration:none;font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;font-weight:500;-webkit-transition:color .25s;transition:color .25s;}
+.nav-center a:hover{color:var(--gold);}
+.nav-right{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;-webkit-align-items:center;align-items:center;}
+/* theme switch */
+.theme-switch{position:relative;width:48px;height:26px;cursor:pointer;margin-right:20px;}
+.theme-switch input{display:none;}
+.theme-track{position:absolute;top:0;left:0;right:0;bottom:0;border-radius:13px;background:rgba(255,255,255,0.1);border:1px solid var(--border);-webkit-transition:background 0.35s,border-color 0.35s;transition:background 0.35s,border-color 0.35s;}
+html.light .theme-track{background:rgba(201,168,76,0.18);border-color:rgba(201,168,76,0.5);}
+.theme-thumb{position:absolute;top:4px;left:4px;width:16px;height:16px;border-radius:50%;display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;-webkit-align-items:center;align-items:center;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;font-size:11px;line-height:1;background:rgba(240,237,230,0.6);-webkit-transition:-webkit-transform 0.35s cubic-bezier(0.34,1.56,0.64,1),background 0.35s;transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1),background 0.35s;}
+html.light .theme-thumb{-webkit-transform:translateX(22px);transform:translateX(22px);background:var(--gold);color:#fff;}
+/* lang */
+.nav-lang{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;-webkit-align-items:center;align-items:center;}
+.lang-btn{cursor:pointer;padding:4px 8px;color:var(--text-3);border:none;background:none;font-family:'Nunito',sans-serif;font-size:.62rem;letter-spacing:.15em;text-transform:uppercase;font-weight:500;-webkit-transition:color .2s;transition:color .2s;}
+.lang-btn:hover{color:var(--text);}
+.lang-btn.active{color:var(--gold);}
+.lang-sep{color:var(--border);font-size:.65rem;}
+/* burger */
+.burger{display:none;-webkit-flex-direction:column;flex-direction:column;cursor:pointer;padding:8px;background:none;border:none;}
+.burger span{display:block;width:22px;height:1.5px;background:var(--text);margin-bottom:5px;-webkit-transition:all .3s;transition:all .3s;}
+.burger span:last-child{margin-bottom:0;}
+.burger.open span:first-child{-webkit-transform:translateY(6.5px) rotate(45deg);transform:translateY(6.5px) rotate(45deg);}
+.burger.open span:nth-child(2){opacity:0;}
+.burger.open span:last-child{-webkit-transform:translateY(-6.5px) rotate(-45deg);transform:translateY(-6.5px) rotate(-45deg);}
+/* mobile nav */
+.mobile-nav{display:none;position:fixed;top:var(--nav-h);left:0;right:0;bottom:0;z-index:190;background:var(--bg-nav);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);-webkit-flex-direction:column;flex-direction:column;-webkit-box-align:center;-webkit-align-items:center;align-items:center;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;-webkit-transform:translateX(100%);transform:translateX(100%);-webkit-transition:-webkit-transform .35s ease;transition:transform .35s ease;}
+.mobile-nav.open{-webkit-transform:translateX(0);transform:translateX(0);}
+.mobile-nav a{display:block;font-family:'Libre Baskerville',serif;font-size:clamp(1.6rem,6vw,2.2rem);font-weight:300;color:var(--text);text-decoration:none;letter-spacing:.04em;margin-bottom:28px;text-align:center;width:100%;padding:0 20px;box-sizing:border-box;line-height:1.25;}
+.mobile-lang{display:-webkit-box;display:-webkit-flex;display:flex;}
+.mobile-lang button{background:none;border:1px solid var(--border);color:var(--text-2);font-family:'Nunito',sans-serif;font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;padding:8px 16px;cursor:pointer;font-weight:500;-webkit-transition:all .25s;transition:all .25s;margin-right:10px;}
+.mobile-lang button:last-child{margin-right:0;}
+.mobile-lang button.active{border-color:var(--gold);color:var(--gold);}
+.mobile-theme{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;-webkit-align-items:center;align-items:center;margin-top:24px;}
+.mobile-theme-label{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text-3);font-weight:500;margin-right:12px;}
+
+/* HERO */
+.hero{height:100vh;min-height:600px;display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-direction:column;flex-direction:column;-webkit-box-align:center;-webkit-align-items:center;align-items:center;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;position:relative;text-align:center;overflow:hidden;padding:0 24px;}
+.hero-photo{
+  position:absolute;top:0;left:0;right:0;bottom:0;
+  background-size:cover;
+  background-position:center 35%;
+}
+/* Тёмный overlay — одинаков для обеих тем */
+.hero-photo::after{
+  content:'';
+  position:absolute;top:0;left:0;right:0;bottom:0;
+  background:rgba(0,0,0,0.62);
+}
+/* Hero ВСЕГДА тёмный — независимо от темы */
+.hero{background:#080c08 !important;}
+.hero-bg{position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse 80% 60% at 50% 30%,rgba(201,168,76,.08) 0%,transparent 70%),radial-gradient(ellipse 60% 80% at 80% 80%,rgba(74,127,165,.05) 0%,transparent 60%),radial-gradient(ellipse 50% 70% at 20% 70%,rgba(90,158,111,.04) 0%,transparent 60%);}
+.hero-grid{position:absolute;top:0;left:0;right:0;bottom:0;background-image:linear-gradient(rgba(201,168,76,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(201,168,76,.04) 1px,transparent 1px);background-size:80px 80px;-webkit-mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black 30%,transparent 80%);mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black 30%,transparent 80%);}
+.hero-tagline{font-family:'Libre Baskerville',serif;font-size:1.05rem;letter-spacing:.4em;color:var(--gold);text-transform:uppercase;margin-bottom:22px;position:relative;-webkit-animation:fadeUp .9s ease both .2s;animation:fadeUp .9s ease both .2s;}
+.hero-title{font-family:'Libre Baskerville',serif;font-size:9rem;font-weight:600;line-height:.95;color:#ffffff;text-shadow:0 2px 20px rgba(0,0,0,0.5);position:relative;-webkit-animation:fadeUp .9s ease both .4s;animation:fadeUp .9s ease both .4s;letter-spacing:-.02em;}
+.hero-title .hero-group{font-size:5.5rem;font-weight:400;letter-spacing:.08em;display:block;color:#ffffff;margin-top:12px;}
+@media(max-width:768px){.hero-title{font-size:6.5rem;}.hero-title .hero-group{font-size:4rem;}}
+@media(max-width:420px){.hero-title{font-size:5.5rem;}.hero-title .hero-group{font-size:3.4rem;}}
+.hero-title span{color:#ffffff;font-style:normal;}
