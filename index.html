@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>MCR Planet</title>
+<!-- Шрифты загружаются асинхронно — не блокируют рендер на iOS -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Nunito:wght@300;400;500;600&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Nunito:wght@300;400;500;600&display=swap" rel="stylesheet"></noscript>
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/layout.css">
+<link rel="stylesheet" href="assets/css/components.css">
+<link rel="stylesheet" href="assets/css/catalog.css">
+<!-- EmailJS SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<!-- hCaptcha -->
+<script src="https://js.hcaptcha.com/1/api.js?render=explicit" async defer></script>
+<script>
+  /* ════════════════════════════════════════
+     EMAILJS — заполни значения после регистрации на emailjs.com
+     ════════════════════════════════════════ */
+  window.EMAILJS_PUBLIC_KEY  = "YOUR_PUBLIC_KEY_HERE";
+  window.EMAILJS_SERVICE_ID  = "YOUR_SERVICE_ID_HERE";
+  window.EMAILJS_TEMPLATE_ID = "YOUR_TEMPLATE_ID_HERE";
+  if (window.emailjs && window.EMAILJS_PUBLIC_KEY && window.EMAILJS_PUBLIC_KEY.indexOf("YOUR_") !== 0) {
+    try { emailjs.init({ publicKey: window.EMAILJS_PUBLIC_KEY }); } catch(e) { console.warn("EmailJS init failed:", e); }
+  }
+
+  /* ════════════════════════════════════════
+     hCAPTCHA — тестовый ключ (всегда успешен)
+     После регистрации на hcaptcha.com замени на свой site key
+     ════════════════════════════════════════ */
+  window.HCAPTCHA_SITE_KEY = "10000000-ffff-ffff-ffff-000000000001";
+
+  /* ════════════════════════════════════════
+     UMAMI ANALYTICS — заполни после регистрации на cloud.umami.is
+     Бесплатный план: 10K просмотров/мес, без cookies, без баннера
+     ════════════════════════════════════════ */
+  window.UMAMI_WEBSITE_ID = "YOUR_UMAMI_WEBSITE_ID_HERE";
+  window.UMAMI_SCRIPT_URL = "https://cloud.umami.is/script.js";
+  (function(){
+    if (window.UMAMI_WEBSITE_ID && window.UMAMI_WEBSITE_ID.indexOf("YOUR_") !== 0) {
+      var sc = document.createElement('script');
+      sc.defer = true;
+      sc.src = window.UMAMI_SCRIPT_URL;
+      sc.setAttribute('data-website-id', window.UMAMI_WEBSITE_ID);
+      document.head.appendChild(sc);
+    }
+  })();
+</script>
+</head>
+<body>
+
+<div id="preloader">
+  <div class="pre-letters">
+    <span class="pre-letter">M</span>
+    <span class="pre-letter">C</span>
+    <span class="pre-letter">R</span>
+  </div>
+  <div class="pre-group">Planet</div>
+  <div class="pre-bar"><div class="pre-bar-fill" id="pre-bar-fill"></div></div>
+</div>
+<div id="cur-dot"></div>
+<div id="cur-ring"></div>
+<div id="spbar"></div>
+<div id="side-nav">
+  <div class="sd act" data-t="overview"><span class="sd-lbl">Our Expertise</span></div>
+  <div class="sd" data-t="sections"><span class="sd-lbl">Mine · Construction · Recycling</span></div>
+  <div class="sd" data-t="about"><span class="sd-lbl">About Us</span></div>
+</div>
+<button id="btt" aria-label="Top">&#8593;</button>
+<div id="toast">Copied!</div>
+<div id="loading"><div class="loading-logo">MCR</div></div>
+
+<nav>
+  <a class="nav-logo" href="#top" onclick="goToTop(event)">MCR Planet</a>
+  <ul class="nav-center">
+    <li><a href="#overview" data-i18n="nav.directions">Directions</a></li>
+    <li><a href="#about" data-i18n="nav.about">About Us</a></li>
+    <li><a href="#contact" data-i18n="nav.contacts">Contacts</a></li>
+  </ul>
+  <div id="nav-search-wrap">
+    <svg id="nav-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input id="nav-search-input" type="text" data-i18n-placeholder="ui.searchph" placeholder="Search services..." autocomplete="off" spellcheck="false">
+    <button id="nav-search-clear" style="display:none">&#215;</button>
+  </div>
+  <div class="nav-right">
+    <label class="theme-switch" title="Toggle theme">
+      <input type="checkbox" id="themeCheckbox">
+      <div class="theme-track"><div class="theme-thumb" id="themeThumb">&#9790;</div></div>
+    </label>
+    <div class="nav-lang">
+      <button class="lang-btn active" id="btn-en">ENG</button>
+      <span class="lang-sep">/</span>
+      <button class="lang-btn" id="btn-es">ESP</button>
+      <span class="lang-sep">/</span>
+      <button class="lang-btn" id="btn-pl">POL</button>
+    </div>
+  </div>
+  <button id="mob-search-btn" aria-label="Search">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+  </button>
+  <button class="burger" id="burger"><span></span><span></span><span></span></button>
+</nav>
+
+<!-- Мобильный поиск оверлей -->
+<div id="mob-search-overlay">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+  <input id="mob-search-field" type="search" placeholder="Search..." autocomplete="off">
+  <button id="mob-search-cancel">Cancel</button>
+</div>
+<div id="mob-search-results"></div>
+
+<div class="mobile-nav" id="mobileNav">
+  <a href="#overview" data-i18n="nav.directions">Directions</a>
+  <a href="#about" data-i18n="nav.about">About Us</a>
+  <a href="#contact" data-i18n="nav.contacts">Contacts</a>
+  <div class="mobile-lang">
+    <button id="mbtn-en" class="active">ENG</button>
+    <button id="mbtn-es">ESP</button>
+    <button id="mbtn-pl">POL</button>
+  </div>
+  <div class="mobile-theme">
+    <span class="mobile-theme-label" id="mobileThemeLabel">Dark Mode</span>
+    <label class="theme-switch">
+      <input type="checkbox" id="mobileThemeCheckbox">
+      <div class="theme-track"><div class="theme-thumb" id="mobileThemeThumb">&#9790;</div></div>
+    </label>
+  </div>
+</div>
+
+<div id="top"></div>
+<section class="hero">
+  <div class="hero-photo" style="background-image:url('media/hero-bg.jpg');"></div><div class="hero-bg"></div><div class="hero-grid"></div><div class="hero-tint" id="hero-tint"></div>
+  <p class="hero-tagline" data-i18n="hero.tagline">Engineering &middot; Geology &middot; Innovation</p>
+  <h1 class="hero-title">MCR<span class="hero-group">PLANET</span></h1>
+  <p class="hero-sub" data-i18n="hero.sub">Mine<br>&middot;<br>Construction<br>&middot;<br>Recycling</p>
+  <div class="hero-scroll"><span data-i18n="ui.scroll">Scroll</span><div class="scroll-line"></div></div>
+</section>
+<section class="overview" id="overview">
+  <p class="section-label" data-i18n="ui.directions">Our Directions</p>
+  <div class="div-grid" id="divGrid"></div>
+</section>
+<div class="sep"></div>
+<section id="sections"><div id="sectionsContainer"></div>
+<section class="about" id="about">
+  <div class="about-inner">
+    <div class="about-left">
+      <p class="section-label" data-i18n="ui.about">About Us</p>
+      <h2 class="section-title about-title-size" id="about-title"></h2>
+      <div class="about-line"></div>
+      <p class="about-text" id="about-p1"></p>
+      <p class="about-text" id="about-p2"></p>
+      <p class="about-text" id="about-p3"></p>
+    </div>
+    <div class="about-right" id="about-stats"></div>
+  </div>
+</section>
+<section class="contact" id="contact">
+  <div class="contact-inner">
+    <div class="contact-info">
+      <p class="section-label" data-i18n="ui.contact">Get in Touch</p>
+      <h2 class="section-title" id="contact-title"></h2>
+      <div class="c-detail"><div class="c-label" data-i18n="ui.company">Company</div><div class="c-val" id="c-company"></div></div>
+      <div class="c-detail"><div class="c-label" data-i18n="ui.email">Email</div><div class="c-val" id="c-email"></div></div>
+
+    </div>
+    <div class="contact-form-wrap">
+      <div class="contact-form">
+        <div class="f-field"><label class="f-label" data-i18n="ui.fname">Your Name</label><input class="f-input" type="text" name="from_name" autocomplete="name"></div>
+        <div class="f-field"><label class="f-label" data-i18n="ui.femail">Email</label><input class="f-input" type="email" name="from_email" autocomplete="email"></div>
+        <div class="f-field"><label class="f-label" data-i18n="ui.fdir">Direction</label><input class="f-input" type="text" name="direction"></div>
+        <div class="f-field"><label class="f-label" data-i18n="ui.fmsg">Message</label><textarea class="f-textarea" name="message"></textarea></div>
+        <!-- Honeypot для ботов: скрыто стилями -->
+        <div style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;" aria-hidden="true"><label>Leave this field empty<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+        <!-- hCaptcha -->
+        <div class="f-captcha"><div id="hcaptcha-container"></div></div>
+        <!-- GDPR consent -->
+        <label class="f-consent" id="f-consent-label">
+          <input type="checkbox" id="f-consent-cb">
+          <span data-i18n="ui.consent">I have read and agree to the <a href="pages/privacy.html" target="_blank">Privacy Policy</a> and consent to the processing of my personal data.</span>
+        </label>
+        <button class="f-btn" data-i18n="ui.fsend">Send Message</button>
+      </div>
+    </div>
+  </div>
+</section>
+<footer>
+  <div class="f-logo">MCR Planet</div>
+  <div class="f-divs">
+    <span class="f-div mine">Mine</span>
+    <span class="f-div construction" data-i18n="div.construction">Construction</span>
+    <span class="f-div recycling" data-i18n="div.recycling">Recycling</span>
+  </div>
+  <div class="f-legal" style="display:flex;gap:18px;font-family:'Nunito',sans-serif;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;">
+    <a href="pages/privacy.html" data-i18n="footer.privacy" style="color:var(--text-3);text-decoration:none;transition:color .2s;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--text-3)'">Privacy Policy</a>
+    <a href="pages/terms.html" data-i18n="footer.terms" style="color:var(--text-3);text-decoration:none;transition:color .2s;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--text-3)'">Terms</a>
+  </div>
+  <button class="pdf-btn" onclick="generatePDF()" title="Download contact card as PDF">
+    <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM8 17h8v1.5H8V17zm0-3h8v1.5H8V14zm0-3h5v1.5H8V11z"/></svg>
+    PDF Card
+  </button>
+  <div class="f-copy">&copy; 2026 MCR Planet.</div>
+</footer>
+
+<script src="assets/js/01-translations.js" defer></script>
+<script src="assets/js/02-render.js" defer></script>
+<script src="assets/js/03-search.js" defer></script>
+<script src="assets/js/04-catalog.js" defer></script>
+
+<!-- ПОИСК оверлей -->
+<div id="search-overlay">
+  <div id="search-box">
+    <input id="search-input" type="text" placeholder="Search services..." autocomplete="off">
+    <div id="search-results"></div>
+  </div>
+</div>
+
+<!-- ХЛЕБНЫЕ КРОШКИ -->
+<div id="breadcrumb">
+  <span class="bc-item bc-section-name" id="bc-section"></span>
+  <span class="bc-sep">›</span>
+  <span class="bc-item bc-current" id="bc-service"></span>
+</div>
+
+<!-- МОДАЛЬНОЕ ОКНО -->
+<div id="modal-overlay">
+  <div id="modal-box">
+    <button id="modal-close">✕</button>
+    <div id="modal-content">
+      <div class="modal-tag" id="modal-tag"></div>
+      <h2 class="modal-title" id="modal-title"></h2>
+      <p class="modal-desc" id="modal-desc"></p>
+      <ul class="modal-points" id="modal-points"></ul>
+      <button class="modal-read-more" id="modal-read-more" data-i18n="ui.readmore">Read full section →</button>
+    </div>
+  </div>
+</div>
+
+<!-- COOKIE BANNER -->
+<div id="cookie-banner">
+  <div id="cookie-text">
+    We use cookies to improve your experience. By continuing, you agree to our
+    <a href="#">Privacy Policy</a>. This site complies with GDPR.
+  </div>
+  <div class="cookie-btns">
+    <button class="cookie-accept" id="cookie-accept">Accept</button>
+    <button class="cookie-decline" id="cookie-decline">Decline</button>
+  </div>
+</div>
+
+<!-- СОЦСЕТИ + ЗВОНОК FAB -->
+<div id="social-fab">
+  <a class="fab-btn fab-li" id="fab-li" href="https://linkedin.com/company/YOUR_LINKEDIN" target="_blank" rel="noopener">
+    <span class="fab-label">LinkedIn</span>
+    <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+  </a>
+  <a class="fab-btn fab-fb" id="fab-fb" href="https://facebook.com/YOUR_FACEBOOK" target="_blank" rel="noopener">
+    <span class="fab-label">Facebook</span>
+    <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+  </a>
+  <a class="fab-btn fab-ig" id="fab-ig" href="https://instagram.com/YOUR_INSTAGRAM" target="_blank" rel="noopener">
+    <span class="fab-label">Instagram</span>
+    <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+  </a>
+  <button class="fab-toggle" id="fab-toggle">+</button>
+</div>
+
+<!-- КАТАЛОГ OVERLAY -->
+<div id="catalog-overlay">
+ <div class="cat-nav-bar">
+    <!-- Лого — закрывает каталог и возвращает наверх -->
+    <button class="nav-logo" id="cat-logo-btn" onclick="hideCatalog(); setTimeout(function(){ window.scrollTo(0,0); }, 50);">MCR Planet</button>
+    <!-- Десктоп: тема + язык + Back -->
+    <div class="cat-nav-right">
+      <label class="theme-switch" title="Toggle theme" id="cat-theme-label">
+        <input type="checkbox" id="cat-theme-cb" style="position:absolute;opacity:0;width:0;height:0;pointer-events:none;">
+        <div class="theme-track"><div class="theme-thumb" id="cat-theme-thumb">&#9790;</div></div>
+      </label>
+      <div class="nav-lang">
+        <button class="lang-btn" id="cat-btn-en">ENG</button>
+        <span class="lang-sep">/</span>
+        <button class="lang-btn" id="cat-btn-es">ESP</button>
+        <span class="lang-sep">/</span>
+        <button class="lang-btn" id="cat-btn-pl">POL</button>
+      </div>
+      <button class="cat-back-btn-nav" onclick="hideCatalog()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg>
+        Back
+      </button>
+    </div>
+    <!-- Мобильный: лупа + бургер сгруппированы -->
+    <div class="cat-nav-mobile-actions">
+      <button id="cat-mob-search-btn" aria-label="Search" onclick="catOpenMobSearch()">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </button>
+      <button class="burger" id="cat-burger"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+
+  <!-- Мобильный поиск каталога -->
+  <div id="cat-mob-search-overlay">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input id="cat-mob-search-field" type="search" placeholder="Search equipment..." autocomplete="off">
+    <button id="cat-mob-search-cancel" onclick="catCloseMobSearch()">Cancel</button>
+  </div>
+  <div id="cat-mob-search-results"></div>
+  <!-- Мобильное меню каталога — идентично mobileNav главной -->
+  <div class="mobile-nav" id="catMobileNav">
+  <div class="mobile-lang">
+    <button id="cat-mbtn-en">ENG</button>
+    <button id="cat-mbtn-es">ESP</button>
+    <button id="cat-mbtn-pl">POL</button>
+  </div>
+  <div class="mobile-theme">
+    <span class="mobile-theme-label" id="catMobileThemeLabel">Dark Mode</span>
+    <label class="theme-switch">
+      <input type="checkbox" id="catMobileThemeCheckbox">
+      <div class="theme-track"><div class="theme-thumb" id="catMobileThemeThumb">&#9790;</div></div>
+    </label>
+  </div>
+  <button id="cat-mob-back" onclick="hideCatalog();catCloseMenu();" style="margin-top:12px;background:none;border:1px solid var(--border);color:var(--text-2);font-family:'Nunito',sans-serif;font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;padding:14px 28px;cursor:pointer;display:-webkit-inline-box;display:-webkit-inline-flex;display:inline-flex;-webkit-box-align:center;align-items:center;gap:8px;">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg>
+    Back to MCR Planet
+  </button>
+</div>
+  <!-- Мобильное меню каталога -->
+  
+  
+
+
+
+
+<div class="cat-hero">
+  <p class="cat-label">MCR Planet</p>
+  <h1 class="cat-title">Equipment Catalogue</h1>
+  <p class="cat-desc">Comprehensive supply of industrial equipment and processing technologies for mining waste reprocessing, recycling, and biofuel production. Select a category to explore our solutions.</p>
+</div>
+
+<div class="cat-filters">
+  <button class="cat-filter active" data-filter="all">All Equipment</button>
+  <button class="cat-filter" data-filter="mine">Mine Division</button>
+  <button class="cat-filter" data-filter="recycling">Recycling Division</button>
+</div>
+
+<div id="cat-content"></div>
+
+<footer class="cat-footer">
+  <div class="cat-footer-logo">MCR Planet</div>
+  <div class="cat-footer-copy">&copy; 2026 MCR Planet. info@mcrgroup.biz</div>
+</footer>
+
+
+
+</div>
+<button id="cat-back-btn" onclick="hideCatalog()">← Back</button>
+<!-- КАТАЛОГ — МОДАЛЬНОЕ ОКНО КАРТОЧКИ -->
+<div id="cat-modal-overlay">
+  <div id="cat-modal-box">
+    <button id="cat-modal-close">✕</button>
+    <div class="cat-modal-img-placeholder" id="cat-modal-placeholder">MCR Planet · Equipment</div>
+    <img id="cat-modal-img" src="" alt="">
+    <div id="cat-modal-content">
+      <div class="cat-modal-div-tag" id="cat-modal-tag"></div>
+      <h2 class="cat-modal-title" id="cat-modal-title"></h2>
+      <p class="cat-modal-desc" id="cat-modal-desc"></p>
+      <ul class="cat-modal-points" id="cat-modal-points"></ul>
+      <button class="cat-modal-req" id="cat-modal-req">Request Information →</button>
+    </div>
+  </div>
+</div>
+
+
+</body>
+</html>
