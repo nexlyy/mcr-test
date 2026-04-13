@@ -37,7 +37,7 @@
      hCAPTCHA — тестовый ключ (всегда успешен)
      После регистрации на hcaptcha.com замени на свой site key
      ════════════════════════════════════════ */
-  window.HCAPTCHA_SITE_KEY = "edec62d2-6300-40dc-987e-e43c8c0e3262";
+  window.HCAPTCHA_SITE_KEY = "10000000-ffff-ffff-ffff-000000000001";
 
   /* ════════════════════════════════════════
      UMAMI ANALYTICS — заполни после регистрации на cloud.umami.is
@@ -213,6 +213,7 @@
 <script src="assets/js/01-translations.js" defer></script>
 <script src="assets/js/02-render.js" defer></script>
 <script src="assets/js/03-search.js" defer></script>
+<script src="assets/js/catalog-data.js" defer></script>
 <script src="assets/js/04-catalog.js" defer></script>
 
 <!-- ПОИСК оверлей -->
@@ -278,7 +279,13 @@
  <div class="cat-nav-bar">
     <!-- Лого — закрывает каталог и возвращает наверх -->
     <button class="nav-logo" id="cat-logo-btn" onclick="hideCatalog(); setTimeout(function(){ window.scrollTo(0,0); }, 50);">MCR Planet</button>
-    <!-- Десктоп: тема + язык + Back -->
+    <!-- Центральный поиск по оборудованию каталога -->
+    <div id="cat-nav-search-wrap">
+      <svg id="cat-nav-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input id="cat-nav-search-input" type="text" placeholder="Search equipment..." autocomplete="off" spellcheck="false">
+      <button id="cat-nav-search-clear" style="display:none">&#215;</button>
+    </div>
+    <!-- Десктоп: тема + язык -->
     <div class="cat-nav-right">
       <label class="theme-switch" title="Toggle theme" id="cat-theme-label">
         <input type="checkbox" id="cat-theme-cb" style="position:absolute;opacity:0;width:0;height:0;pointer-events:none;">
@@ -291,10 +298,6 @@
         <span class="lang-sep">/</span>
         <button class="lang-btn" id="cat-btn-pl">POL</button>
       </div>
-      <button class="cat-back-btn-nav" onclick="hideCatalog()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg>
-        Back
-      </button>
     </div>
     <!-- Мобильный: лупа + бургер сгруппированы -->
     <div class="cat-nav-mobile-actions">
@@ -354,7 +357,7 @@
 
 <footer class="cat-footer">
   <div class="cat-footer-logo">MCR Planet</div>
-  <div class="cat-footer-copy">&copy; 2026 MCR Planet. info@mcrgroup.biz</div>
+  <div class="cat-footer-copy">&copy; 2026 MCR Planet. info@mcrplanet.com</div>
 </footer>
 
 
@@ -367,11 +370,14 @@
     <button id="cat-modal-close">✕</button>
     <div class="cat-modal-img-placeholder" id="cat-modal-placeholder">MCR Planet · Equipment</div>
     <img id="cat-modal-img" src="" alt="">
+    <div class="cat-modal-thumbs" id="cat-modal-thumbs"></div>
     <div id="cat-modal-content">
       <div class="cat-modal-div-tag" id="cat-modal-tag"></div>
       <h2 class="cat-modal-title" id="cat-modal-title"></h2>
       <p class="cat-modal-desc" id="cat-modal-desc"></p>
       <ul class="cat-modal-points" id="cat-modal-points"></ul>
+      <div id="cat-modal-specs"></div>
+      <div id="cat-modal-partner"></div>
       <button class="cat-modal-req" id="cat-modal-req">Request Information →</button>
     </div>
   </div>
