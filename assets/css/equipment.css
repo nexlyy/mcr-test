@@ -301,8 +301,7 @@ body{
 }
 .eq-back-btn:hover{background:#b8943e;padding:22px 14px;}
 @media(max-width:760px){
-  .eq-back-btn{padding:14px 10px;font-size:.6rem;letter-spacing:.15em;}
-  .eq-back-btn:hover{padding:16px 10px;}
+  .eq-back-wrap{display:none !important;}
 }
 
 /* ═══════ Solid nav over catalog and equipment page ═══════ */
@@ -335,8 +334,6 @@ html.boot-catalog body > *:not(nav):not(#catalog-overlay):not(#cat-back-btn):not
 
 /* ═══════ MOBILE TUNING ═══════ */
 @media(max-width:760px){
-  .cat-grid{grid-template-columns:1fr !important;gap:16px !important;}
-  .cat-card-img{aspect-ratio:16/10;}
   .eq-crumbs{font-size:.65rem;flex-wrap:wrap;padding:18px 18px 0;}
   .eq-crumbs .sep{margin:0 6px;}
   .eq-hero{padding:0 18px;}
