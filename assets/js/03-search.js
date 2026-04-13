@@ -304,7 +304,7 @@ function buildPDF() {
   var c = CONTENT && CONTENT.contacts ? CONTENT.contacts : {};
   var contacts = [
     { label:'COMPANY', value: c.company || 'MCR Planet' },
-    { label:'EMAIL',   value: c.email   || 'info@mcrgroup.biz' },
+    { label:'EMAIL',   value: c.email   || 'info@mcrplanet.com' },
 
   ];
 

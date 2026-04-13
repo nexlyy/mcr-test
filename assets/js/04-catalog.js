@@ -1,8 +1,7 @@
 /* === CATALOGUE DATA, RENDER, HCAPTCHA, MOBILE SEARCH === */
-var CATALOGUE = {
-  mine: [],
-  recycling: []
-};
+/* CATALOGUE загружается из catalog-data.js */
+if (typeof CATALOGUE === "undefined") { var CATALOGUE = { mine: [], recycling: [] }; }
+
 
 var currentFilter = 'all';
 
@@ -52,29 +51,75 @@ function renderCatalogue() {
     grid.className = 'cat-grid';
     items.forEach(function(item) {
       var itemTitle = item['title_' + cl] || item.title_en || '';
-      var itemDesc  = item['desc_'  + cl] || item.desc_en  || '';
-      var itemPts   = item['points_' + cl] || item.points_en || [];
-      var card = document.createElement('div');
+      var itemDesc  = item['short_' + cl] || item.short_en || item['desc_'  + cl] || item.desc_en  || '';
+      var itemImg   = (item.images && item.images[0]) || item.image || '';
+      /* Короткий teaser: первое предложение или 110 символов */
+      var teaser = itemDesc;
+      var dotIdx = teaser.indexOf('. ');
+      if (dotIdx > 30 && dotIdx < 140) teaser = teaser.substr(0, dotIdx + 1);
+      else if (teaser.length > 130) teaser = teaser.substr(0, 130).replace(/\s+\S*$/, '') + '…';
+
+      /* Карточка как ссылка <a> — это даёт SEO, шаринг и shift+click "open in new tab" */
+      var card = document.createElement('a');
       card.className = 'cat-card ' + div;
-      card.style.cursor = 'pointer';
-      (function(t, d, pts, dn, imgSrc) {
-        card.addEventListener('click', function(e) {
-          if (e.target.classList.contains('cat-card-link')) return;
-          showCatModal(t, d, pts, dn, imgSrc);
-        });
-      })(itemTitle, itemDesc, itemPts, divName, item.image || '');
-      var tag = document.createElement('div'); tag.className = 'cat-card-tag ' + div; tag.textContent = divName;
-      var t = document.createElement('h3'); t.className = 'cat-card-title'; t.textContent = itemTitle;
-      var d = document.createElement('p'); d.className = 'cat-card-desc'; d.textContent = itemDesc;
-      var ul = document.createElement('ul'); ul.className = 'cat-card-points';
-      itemPts.forEach(function(pt) { var li = document.createElement('li'); li.textContent = pt; ul.appendChild(li); });
-      var reqLabel = {en:'Request Information →', es:'Solicitar Información →', pl:'Zapytaj o Ofertę →'};
-      var link = document.createElement('button'); link.className = 'cat-card-link'; link.textContent = reqLabel[cl] || reqLabel.en;
-      link.addEventListener('click', function(e) {
-        e.stopPropagation(); hideCatalog();
-        setTimeout(function() { var c = document.getElementById('contact'); if (c && typeof goTo === 'function') goTo(c); }, 500);
+      card.setAttribute('data-id', item.id || '');
+      card.setAttribute('href', 'pages/equipment.html?id=' + encodeURIComponent(item.id || ''));
+
+      /* Превью-картинка */
+      var imgWrap = document.createElement('div');
+      imgWrap.className = 'cat-card-img';
+      if (itemImg) {
+        var img = document.createElement('img');
+        img.src = itemImg;
+        img.alt = itemTitle;
+        img.loading = 'lazy';
+        imgWrap.appendChild(img);
+      } else {
+        imgWrap.classList.add('cat-card-img-empty');
+        imgWrap.textContent = 'MCR Planet';
+      }
+
+      var tag = document.createElement('div');
+      tag.className = 'cat-card-tag ' + div;
+      tag.textContent = divName;
+
+      var t = document.createElement('h3');
+      t.className = 'cat-card-title';
+      t.textContent = itemTitle;
+
+      var d = document.createElement('p');
+      d.className = 'cat-card-desc';
+      d.textContent = teaser;
+
+      var viewLabels = {en:'View Details →', es:'Ver Detalles →', pl:'Zobacz Szczegóły →'};
+      var link = document.createElement('span');
+      link.className = 'cat-card-link';
+      link.textContent = viewLabels[cl] || viewLabels.en;
+
+      /* Gema attribution on each card */
+      var partner = null;
+      if (item.partner && (item.partner[cl] || item.partner.en)) {
+        partner = document.createElement('div');
+        partner.className = 'cat-card-partner';
+        partner.innerHTML = item.partner[cl] || item.partner.en;
+      }
+
+      /* Mark catalog as the previous page so the "back" button on the equipment
+         page can return us straight to the catalog without re-rendering main page */
+      card.addEventListener('click', function(){
+        try { sessionStorage.setItem('mcr_came_from_catalog','1'); } catch(e){}
       });
-      card.appendChild(tag); card.appendChild(t); card.appendChild(d); card.appendChild(ul); card.appendChild(link);
+
+      card.appendChild(imgWrap);
+      var body = document.createElement('div');
+      body.className = 'cat-card-body';
+      body.appendChild(tag);
+      body.appendChild(t);
+      body.appendChild(d);
+      body.appendChild(link);
+      if (partner) body.appendChild(partner);
+      card.appendChild(body);
+
       grid.appendChild(card);
     });
     content.appendChild(grid);
@@ -155,7 +200,7 @@ function hideCatalog() {
 
 
 /* ══ КАТАЛОГ — МОДАЛЬНОЕ ОКНО КАРТОЧКИ ══ */
-function showCatModal(title, desc, points, divName, imgSrc) {
+function showCatModal(itemOrTitle, divNameOrDesc, legacyPoints, legacyDivName, legacyImg) {
   var overlay = document.getElementById('cat-modal-overlay');
   var tagEl   = document.getElementById('cat-modal-tag');
   var titleEl = document.getElementById('cat-modal-title');
@@ -164,25 +209,130 @@ function showCatModal(title, desc, points, divName, imgSrc) {
   var imgEl   = document.getElementById('cat-modal-img');
   var phEl    = document.getElementById('cat-modal-placeholder');
   var reqBtn  = document.getElementById('cat-modal-req');
+  var thumbsEl= document.getElementById('cat-modal-thumbs');
+  var specsEl = document.getElementById('cat-modal-specs');
+  var partnerEl=document.getElementById('cat-modal-partner');
   if (!overlay) return;
   var cl = (typeof lang !== 'undefined') ? lang : 'en';
-  if (tagEl)   tagEl.textContent   = divName || '';
-  if (titleEl) titleEl.textContent = title || '';
-  if (descEl)  descEl.textContent  = desc  || '';
+
+  /* Поддержка обоих сигнатур: новая (item, divName) и старая (title, desc, points, divName, img) */
+  var item, divName, title, desc, points, images, specs, partner;
+  if (typeof itemOrTitle === 'object' && itemOrTitle !== null) {
+    item = itemOrTitle;
+    divName = divNameOrDesc || '';
+    title = item['title_'+cl] || item.title_en || '';
+    desc  = item['desc_'+cl]  || item.desc_en  || '';
+    points= item['points_'+cl]|| item.points_en|| [];
+    images= item.images || (item.image ? [item.image] : []);
+    specs = item.specs || null;
+    partner = item.partner || null;
+  } else {
+    title = itemOrTitle || '';
+    desc  = divNameOrDesc || '';
+    points= legacyPoints || [];
+    divName = legacyDivName || '';
+    images = legacyImg ? [legacyImg] : [];
+    specs = null;
+    partner = null;
+  }
+
+  if (tagEl)   tagEl.textContent   = divName;
+  if (titleEl) titleEl.textContent = title;
+  if (descEl)  descEl.textContent  = desc;
+
   if (ptsEl) {
     ptsEl.innerHTML = '';
-    (points || []).forEach(function(pt) {
+    points.forEach(function(pt) {
       var li = document.createElement('li'); li.textContent = pt; ptsEl.appendChild(li);
     });
   }
-  /* Изображение */
+
+  /* Главное изображение */
   if (imgEl && phEl) {
-    if (imgSrc) {
-      imgEl.src = imgSrc; imgEl.className = 'has-img'; phEl.style.display = 'none';
+    if (images.length > 0) {
+      imgEl.src = images[0];
+      imgEl.className = 'has-img';
+      phEl.style.display = 'none';
     } else {
-      imgEl.className = ''; imgEl.src = ''; phEl.style.display = '';
+      imgEl.className = '';
+      imgEl.src = '';
+      phEl.style.display = '';
     }
   }
+
+  /* Миниатюры галереи */
+  if (thumbsEl) {
+    thumbsEl.innerHTML = '';
+    if (images.length > 1) {
+      images.forEach(function(src, idx) {
+        var th = document.createElement('img');
+        th.src = src;
+        th.alt = '';
+        if (idx === 0) th.className = 'active';
+        th.addEventListener('click', function(){
+          if (imgEl) imgEl.src = src;
+          thumbsEl.querySelectorAll('img').forEach(function(t){ t.classList.remove('active'); });
+          th.classList.add('active');
+        });
+        thumbsEl.appendChild(th);
+      });
+    }
+  }
+
+  /* Таблица характеристик */
+  if (specsEl) {
+    specsEl.innerHTML = '';
+    if (specs && specs.headers_en && specs.rows) {
+      var sTitle = document.createElement('div');
+      sTitle.className = 'specs-title';
+      sTitle.textContent = specs['title_'+cl] || specs.title_en || '';
+      specsEl.appendChild(sTitle);
+
+      var tbl = document.createElement('table');
+      var thead = document.createElement('thead');
+      var trh = document.createElement('tr');
+      var headers = specs['headers_'+cl] || specs.headers_en;
+      headers.forEach(function(h) {
+        var th = document.createElement('th');
+        th.textContent = h;
+        trh.appendChild(th);
+      });
+      thead.appendChild(trh);
+      tbl.appendChild(thead);
+
+      var tbody = document.createElement('tbody');
+      specs.rows.forEach(function(row) {
+        var tr = document.createElement('tr');
+        var labelTd = document.createElement('td');
+        labelTd.textContent = row['label_'+cl] || row.label_en || '';
+        tr.appendChild(labelTd);
+        var unitTd = document.createElement('td');
+        unitTd.textContent = row.unit || '';
+        tr.appendChild(unitTd);
+        (row.values || []).forEach(function(v) {
+          var td = document.createElement('td');
+          td.textContent = v;
+          tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+      });
+      tbl.appendChild(tbody);
+      specsEl.appendChild(tbl);
+    }
+  }
+
+  /* Блок партнёра */
+  if (partnerEl) {
+    if (partner && (partner[cl] || partner.en)) {
+      var lbls = {en:'Technology Partner', es:'Socio Tecnológico', pl:'Partner Technologiczny'};
+      partnerEl.innerHTML = '<strong>'+(lbls[cl]||lbls.en)+'</strong>' + (partner[cl] || partner.en);
+      partnerEl.style.display = '';
+    } else {
+      partnerEl.innerHTML = '';
+      partnerEl.style.display = 'none';
+    }
+  }
+
   /* Кнопка запроса */
   var reqLabels = {en:'Request Information →', es:'Solicitar Información →', pl:'Zapytaj o Ofertę →'};
   if (reqBtn) {
@@ -248,12 +398,12 @@ function catToggleMenu() {
   if (isOpen) {
     n.className = 'mobile-nav';
     b.className = 'burger';
-    document.body.style.overflow = '';
+    document.body.classList.remove('cat-mobile-menu-open');
   } else {
     catSyncUI();
     n.className = 'mobile-nav open';
     b.className = 'burger open';
-    document.body.style.overflow = 'hidden';
+    document.body.classList.add('cat-mobile-menu-open');
   }
 }
 
@@ -262,7 +412,7 @@ function catCloseMenu() {
   var n = document.getElementById('catMobileNav');
   if (b) b.className = 'burger';
   if (n) n.className = 'mobile-nav';
-  document.body.style.overflow = '';
+  document.body.classList.remove('cat-mobile-menu-open');
 }
 
 /* МОБИЛЬНЫЙ ПОИСК КАТАЛОГА */
@@ -431,3 +581,106 @@ function initCatModal() {
 
 
 /* ══ БУРГЕР КАТАЛОГА ══ */
+
+/* ═══════ FIX: actually initialise catalog modal / theme / language handlers ═══════ */
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', function(){
+    try { if (typeof initCatModal === 'function') initCatModal(); } catch(e){ console.warn('initCatModal failed', e); }
+  });
+} else {
+  try { if (typeof initCatModal === 'function') initCatModal(); } catch(e){ console.warn('initCatModal failed', e); }
+}
+
+/* ═══════ Desktop catalog search (inline in cat-nav-bar) ═══════ */
+(function(){
+  function runDesktopSearch(q){
+    var wrap = document.getElementById('cat-nav-search-wrap');
+    var clearBtn = document.getElementById('cat-nav-search-clear');
+    if(clearBtn) clearBtn.style.display = (q && q.length) ? 'block' : 'none';
+
+    /* Create / reuse the results dropdown */
+    var rs = document.getElementById('cat-nav-search-results');
+    if(!rs){
+      rs = document.createElement('div');
+      rs.id = 'cat-nav-search-results';
+      rs.className = 'cat-srch-results-panel';
+      (wrap || document.body).appendChild(rs);
+    }
+    q = (q || '').trim().toLowerCase();
+    if(q.length < 1){ rs.classList.remove('open'); rs.innerHTML=''; return; }
+    if(typeof CATALOGUE === 'undefined'){ rs.classList.remove('open'); rs.innerHTML=''; return; }
+
+    var cl = (typeof lang !== 'undefined') ? lang : 'en';
+    var divLabels = {mine:{en:'Mine',es:'Minería',pl:'Górnictwo'},recycling:{en:'Recycling',es:'Reciclaje',pl:'Recykling'}};
+    var emptyMsg = {en:'No results',es:'Sin resultados',pl:'Brak wyników'};
+    var hits = [];
+    Object.keys(CATALOGUE).forEach(function(div){
+      (CATALOGUE[div]||[]).forEach(function(item){
+        var t  = item['title_'+cl] || item.title_en || '';
+        var d  = item['desc_'+cl]  || item.desc_en  || '';
+        var s  = item['short_'+cl] || item.short_en || '';
+        var hay = (t + ' ' + d + ' ' + s).toLowerCase();
+        if(hay.indexOf(q) > -1){ hits.push({div:div, item:item, title:t}); }
+      });
+    });
+    if(!hits.length){
+      rs.innerHTML = '<div class="cat-srch-empty">'+(emptyMsg[cl]||emptyMsg.en)+'</div>';
+    } else {
+      var html = '';
+      hits.forEach(function(h){
+        var lab = (divLabels[h.div][cl] || divLabels[h.div].en);
+        html += '<a class="cat-srch-item" href="pages/equipment.html?id='+encodeURIComponent(h.item.id||'')+'" data-div="'+h.div+'">'
+              + '<span class="cat-srch-tag">'+lab+'</span>'
+              + '<span class="cat-srch-name">'+h.title+'</span>'
+              + '</a>';
+      });
+      rs.innerHTML = html;
+      rs.querySelectorAll('.cat-srch-item').forEach(function(el){
+        el.addEventListener('click', function(){
+          try { sessionStorage.setItem('mcr_came_from_catalog','1'); } catch(e){}
+        });
+      });
+    }
+    rs.classList.add('open');
+  }
+
+  function bind(){
+    var input = document.getElementById('cat-nav-search-input');
+    if(!input || input._bound) return;
+    input._bound = true;
+    input.addEventListener('input', function(){ runDesktopSearch(this.value); });
+    input.addEventListener('focus', function(){ if(this.value) runDesktopSearch(this.value); });
+    input.addEventListener('keydown', function(e){ if(e.key==='Escape'){ this.value=''; runDesktopSearch(''); this.blur(); } });
+
+    var clearBtn = document.getElementById('cat-nav-search-clear');
+    if(clearBtn) clearBtn.addEventListener('click', function(){
+      input.value = ''; runDesktopSearch(''); input.focus();
+    });
+
+    /* Hide results when clicking outside */
+    document.addEventListener('click', function(e){
+      var rs = document.getElementById('cat-nav-search-results');
+      var wrap = document.getElementById('cat-nav-search-wrap');
+      if(rs && wrap && !wrap.contains(e.target) && !rs.contains(e.target)){
+        rs.classList.remove('open');
+      }
+    });
+
+    /* Localise placeholder when language changes */
+    var phs = {en:'Search equipment...', es:'Buscar equipos...', pl:'Szukaj sprzętu...'};
+    function syncPh(){
+      var cl = (typeof lang !== 'undefined') ? lang : 'en';
+      input.setAttribute('placeholder', phs[cl] || phs.en);
+    }
+    syncPh();
+    if(typeof setLang === 'function' && !setLang._catNavSearchWrapped){
+      var _origSetLang = setLang;
+      window.setLang = function(l){ _origSetLang(l); syncPh(); };
+      setLang._catNavSearchWrapped = true;
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bind);
+  } else { bind(); }
+})();

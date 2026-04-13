@@ -31,7 +31,7 @@ var CONTENT = {
   },
   contacts: {
     company:"MCR Planet",
-    email:"info@mcrgroup.biz",
+    email:"info@mcrplanet.com",
     phone:"+XX XXX XXX XX XX"
   },
   divisions: [
@@ -323,10 +323,17 @@ function setTheme(light) {
   var icon = light ? '\u2600' : '\u263e';
   var t1 = document.getElementById('themeThumb');
   var t2 = document.getElementById('mobileThemeThumb');
+  var t3 = document.getElementById('cat-theme-thumb');
   var lbl = document.getElementById('mobileThemeLabel');
   if (t1) t1.innerHTML = icon;
   if (t2) t2.innerHTML = icon;
+  if (t3) t3.innerHTML = icon;
   if (lbl) lbl.textContent = light ? 'Light Mode' : 'Dark Mode';
+  /* Sync catalog checkbox so it visually reflects the theme */
+  var catCb = document.getElementById('cat-theme-cb');
+  if (catCb) catCb.checked = light;
+  var catMobCb = document.getElementById('catMobileThemeCheckbox');
+  if (catMobCb) catMobCb.checked = light;
 }
 
 

@@ -886,14 +886,66 @@ var _origSetThemeF = setTheme;
 setTheme = function(lt) { _origSetThemeF(lt); savePrefs(); };
 
 function boot() {
-  /* Всегда начинаем сверху — фикс для мобильного */
-  window.scrollTo(0, 0);
+  /* Если пришли с ?contact=1 — НЕ скроллим в самый верх (потом сами проскроллим к форме) */
+  var params = new URLSearchParams(window.location.search);
+  var goContact = params.get('contact') === '1';
+  var interest = params.get('interest') || '';
+
+  /* FIX: чистим #overview и подобные хеши, чтобы страница всегда открывалась с шапки MCR PLANET */
+  var openCatalogOnBoot = (window.location.hash === '#catalog');
+  if (!goContact && window.location.hash && window.location.hash !== '#catalog' && window.location.hash !== '#contact') {
+    try { window.history.replaceState({}, '', window.location.pathname); } catch(e){}
+  }
+  /* Если открываем каталог сразу — скрываем главный контент пока каталог не показан */
+  if (openCatalogOnBoot) {
+    document.documentElement.classList.add('boot-catalog');
+  }
+
+  if (!goContact) {
+    window.scrollTo(0, 0);
+  }
   if (window.history && window.history.scrollRestoration) {
     window.history.scrollRestoration = 'manual';
   }
   var ld = document.getElementById('loading');
   if (ld) ld.style.display = 'none';
-  runPreloader(function() { safeInit(); setTimeout(function(){ if(!window._typingDone){ window._typingDone=true; startTyping(); }}, 400); });
+
+  /* FAST PATH: arriving via #catalog — skip preloader, init synchronously,
+     open catalog immediately so user never sees the main page flash */
+  if (openCatalogOnBoot) {
+    try { safeInit(); } catch(e){}
+    try { if (typeof showCatalog === 'function') showCatalog('all'); } catch(e){}
+    document.documentElement.classList.remove('boot-catalog');
+    return;
+  }
+
+  runPreloader(function() {
+    safeInit();
+    setTimeout(function(){ if(!window._typingDone){ window._typingDone=true; startTyping(); }}, 400);
+
+    /* (legacy hash handler kept for safety) */
+    if (openCatalogOnBoot) {
+      if (typeof showCatalog === 'function') showCatalog('all');
+      document.documentElement.classList.remove('boot-catalog');
+    }
+
+    /* Обработка прихода с страницы оборудования: скролл к форме + предзаполнение */
+    if (goContact) {
+      setTimeout(function(){
+        var contactSection = document.getElementById('contact');
+        if (contactSection && typeof goTo === 'function') goTo(contactSection);
+        if (interest) {
+          var dirInput = document.querySelector('.f-input[name="direction"]');
+          if (dirInput) {
+            dirInput.value = interest;
+            dirInput.classList.add('ok');
+          }
+        }
+        /* Очищаем URL чтобы при F5 не было повторного скролла */
+        try { window.history.replaceState({}, '', window.location.pathname + window.location.hash); } catch(e){}
+      }, 800);
+    }
+  });
 }
 
 window.addEventListener('resize', function() { if (window.innerWidth > 768) closeMenu(); });
