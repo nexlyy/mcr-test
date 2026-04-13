@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Equipment — MCR Planet</title>
+<meta name="description" content="MCR Planet equipment catalogue — industrial machinery for mining, recycling and construction.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/base.css">
+<link rel="stylesheet" href="../assets/css/equipment.css">
+</head>
+<body data-page="equipment">
+
+<!-- ════════ TOP NAVBAR ════════ -->
+<nav class="eq-nav">
+  <a href="../index.html" class="eq-nav-logo">MCR Planet</a>
+  <div class="eq-nav-right">
+    <label class="theme-switch" title="Toggle theme" onclick="eqToggleTheme()">
+      <div class="theme-track">
+        <div class="theme-thumb">☾</div>
+      </div>
+    </label>
+    <div class="nav-lang">
+      <button class="lang-btn" data-lang="en" onclick="eqSetLang('en')">ENG</button>
+      <span class="lang-sep">/</span>
+      <button class="lang-btn" data-lang="es" onclick="eqSetLang('es')">ESP</button>
+      <span class="lang-sep">/</span>
+      <button class="lang-btn" data-lang="pl" onclick="eqSetLang('pl')">POL</button>
+    </div>
+  </div>
+</nav>
+
+<!-- ════════ BREADCRUMBS ════════ -->
+<div class="eq-crumbs" id="eq-crumbs"></div>
+
+<!-- ════════ BACK BUTTON ════════ -->
+<div class="eq-back-wrap">
+  <a href="../index.html#catalog" class="eq-back-btn" id="eq-back-btn">← Back to catalogue</a>
+</div>
+
+<!-- ════════ ROOT (всё содержимое заполняется JS) ════════ -->
+<div id="eq-root">
+  <!-- Hero: gallery + title -->
+  <section class="eq-hero">
+    <div id="eq-gallery"></div>
+    <div class="eq-info">
+      <div class="eq-tag" id="eq-tag"></div>
+      <h1 class="eq-title" id="eq-title"></h1>
+      <p class="eq-lead" id="eq-lead"></p>
+      <a class="eq-cta" id="eq-cta-top" href="../index.html#contact">Request Information →</a>
+    </div>
+  </section>
+
+  <!-- Content: features + specs + partner -->
+  <section class="eq-content">
+    <h2 class="eq-section-title" id="eq-features-title">Key Features</h2>
+    <ul class="eq-features" id="eq-features"></ul>
+
+    <div id="eq-specs-block"></div>
+
+    <div class="eq-partner" id="eq-partner-block" style="display:none;"></div>
+
+    <div class="eq-bottom-cta">
+      <h3 id="eq-cta-title">Interested in this equipment?</h3>
+      <p id="eq-cta-desc"></p>
+      <a class="eq-cta" id="eq-cta-btn" href="../index.html#contact">Request Information →</a>
+    </div>
+  </section>
+</div>
+
+<!-- Lightbox для увеличения фото -->
+<div id="eq-lightbox" onclick="eqCloseLightbox()">
+  <button class="lb-close" onclick="event.stopPropagation(); eqCloseLightbox();">✕</button>
+  <img id="eq-lightbox-img" src="" alt="">
+</div>
+
+<!-- ════════ DATA + LOGIC ════════ -->
+<script src="../assets/js/catalog-data.js"></script>
+<script src="../assets/js/equipment-page.js"></script>
+</body>
+</html>
