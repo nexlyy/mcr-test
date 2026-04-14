@@ -33,8 +33,7 @@
 #catalog-overlay.open ~ #cat-back-btn,
 body.catalog-open #cat-back-btn{display:block;}
 @media(max-width:768px){
-  #cat-back-btn{display:none !important;}
-  body.catalog-open #cat-back-btn{display:none !important;}
+  #cat-back-btn{padding:10px 8px;font-size:.55rem;}
 }
 
 
@@ -201,7 +200,6 @@ body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;-web
 
 
 
-}
 
 
 /* ══ КАТАЛОГ НАВБАР ══ */
@@ -418,22 +416,16 @@ a.cat-card .cat-card-link{
 }
 a.cat-card:hover .cat-card-link{gap:10px;}
 
-/* ═══════ FIX: solid nav over catalog overlay (no translucency) ═══════ */
-body.catalog-open nav{
-  background:#0a0a0a !important;
-  -webkit-backdrop-filter:none !important;
-  backdrop-filter:none !important;
-  border-bottom:1px solid var(--border) !important;
-}
-html.light body.catalog-open nav{
-  background:#f0ede6 !important;
+/* ═══════ FIX: mobile menu inside catalog overlay — z-index so it's not covered ═══════ */
+#catalog-overlay #catMobileNav{
+  z-index:1100 !important;
 }
 
-/* ═══════ Partner (gema) link on catalog cards ═══════ */
+/* ═══════ Gema attribution on catalog cards ═══════ */
 .cat-card-partner{
-  margin-top:10px;padding-top:10px;
+  margin-top:12px;padding-top:10px;
   border-top:1px solid rgba(201,168,76,0.18);
-  font-family:'Nunito',sans-serif;font-size:.62rem;letter-spacing:.08em;
+  font-family:'Nunito',sans-serif;font-size:.6rem;letter-spacing:.08em;
   text-transform:uppercase;color:var(--text-3);
 }
 .cat-card-partner a{
@@ -442,121 +434,43 @@ html.light body.catalog-open nav{
 }
 .cat-card-partner a:hover{border-bottom-color:var(--gold);}
 
-/* ═══════ Side back tab stays visible ═══════ */
-
-/* ═══════ FIX: catalog navbar fully opaque (no content bleeding through) ═══════ */
-#catalog-overlay .cat-nav-bar{
-  background:#0a0a0a !important;
-  -webkit-backdrop-filter:none !important;
-  backdrop-filter:none !important;
-}
-html.light #catalog-overlay .cat-nav-bar{
-  background:#f0ede6 !important;
-}
-
-/* ═══════ FIX: mobile menu inside catalog overlay — z-index & full-screen ═══════ */
+/* ═══════ FIX: mobile menu inside catalog overlay — above other overlay layers ═══════ */
 #catalog-overlay #catMobileNav{
-  z-index:1100 !important;       /* higher than cat-nav-bar (10) and overlay content */
-  background:#0a0a0a !important;
-  -webkit-backdrop-filter:none !important;
-  backdrop-filter:none !important;
-  top:var(--nav-h) !important;
-  left:0 !important;right:0 !important;bottom:0 !important;
-  overflow-y:auto !important;
-  -webkit-overflow-scrolling:touch;
-  padding:40px 20px !important;
+  z-index:1100 !important;
 }
-html.light #catalog-overlay #catMobileNav{
-  background:#f0ede6 !important;
-}
-/* Kill overflow on body when catalog mobile menu is open — prevent scroll-freeze */
-body.cat-mobile-menu-open #catalog-overlay{overflow:hidden !important;}
 
-/* ═══════ Catalog navbar layout — logo | search | theme/lang ═══════ */
+/* ═══════ Gema attribution on catalog cards ═══════ */
+.cat-card-partner{
+  margin-top:12px;padding-top:10px;
+  border-top:1px solid rgba(201,168,76,0.18);
+  font-family:'Nunito',sans-serif;font-size:.6rem;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--text-3);
+}
+.cat-card-partner a{
+  color:var(--gold);text-decoration:none;
+  border-bottom:1px solid rgba(201,168,76,0.4);
+}
+.cat-card-partner a:hover{border-bottom-color:var(--gold);}
+
+/* ═══════ FIX: prevent horizontal scroll/overflow on mobile catalog ═══════ */
+html, body{overflow-x:hidden;max-width:100%;}
+#catalog-overlay{overflow-x:hidden;}
+#catalog-overlay *{max-width:100%;}
+#catalog-overlay .cat-hero,
+#catalog-overlay .cat-grid,
+#catalog-overlay .cat-section-head,
+#catalog-overlay .cat-footer,
+#catalog-overlay .cat-filters,
 #catalog-overlay .cat-nav-bar{
-  display:flex;align-items:center;
-  gap:28px;
-  padding:0 44px;
+  box-sizing:border-box;
 }
-#catalog-overlay .cat-nav-bar .nav-logo{
-  flex-shrink:0;
-}
-#cat-nav-search-wrap{
-  flex:1 1 auto;
-  max-width:520px;
-  margin:0 auto;
-  position:relative;
-  display:flex;align-items:center;
-  background:rgba(255,255,255,0.06);
-  border:1px solid var(--border);
-  border-radius:2px;
-  height:38px;
-  padding:0 14px;
-  transition:background .2s, border-color .2s;
-}
-#cat-nav-search-wrap:focus-within{
-  background:rgba(255,255,255,0.09);
-  border-color:var(--gold);
-}
-html.light #cat-nav-search-wrap{background:rgba(0,0,0,0.05);}
-html.light #cat-nav-search-wrap:focus-within{background:rgba(0,0,0,0.07);}
-#cat-nav-search-icon{
-  width:15px;height:15px;flex-shrink:0;
-  color:var(--text-3);margin-right:10px;
-}
-#cat-nav-search-input{
-  flex:1;background:none;border:none;outline:none;
-  color:var(--text);font-family:'Nunito',sans-serif;
-  font-size:.78rem;letter-spacing:.04em;
-  padding:0;
-}
-#cat-nav-search-input::placeholder{color:var(--text-3);}
-#cat-nav-search-clear{
-  background:none;border:none;color:var(--text-3);
-  font-size:1.15rem;line-height:1;cursor:pointer;
-  padding:0 0 0 8px;flex-shrink:0;
-}
-#cat-nav-search-clear:hover{color:var(--gold);}
-#catalog-overlay .cat-nav-right{
-  flex-shrink:0;
-  display:flex;align-items:center;gap:20px;
-}
-@media(max-width:900px){
-  #cat-nav-search-wrap{display:none;}
-}
-
-/* ═══════ Mobile: slight right shift of theme switch on equipment page ═══════ */
-@media(max-width:760px){
-  body[data-page="equipment"] nav .theme-switch{margin-right:6px;}
-  body[data-page="equipment"] nav .nav-right{gap:14px;}
-}
-
-/* ═══════ Desktop catalog search results dropdown ═══════ */
-.cat-srch-results-panel{
-  position:absolute;top:calc(100% + 6px);left:0;right:0;
-  background:#0a0a0a;border:1px solid var(--border);border-top:2px solid var(--gold);
-  max-height:min(60vh,480px);overflow-y:auto;
-  display:none;
-  z-index:1200;
-  box-shadow:0 12px 32px rgba(0,0,0,.4);
-}
-html.light .cat-srch-results-panel{background:#f0ede6;}
-.cat-srch-results-panel.open{display:block;}
-.cat-srch-results-panel .cat-srch-item{
-  display:flex;align-items:center;gap:14px;
-  padding:12px 16px;
-  border-bottom:1px solid rgba(255,255,255,0.04);
-  text-decoration:none;color:var(--text);
-  font-family:'Nunito',sans-serif;font-size:.82rem;
-  transition:background .15s;
-}
-.cat-srch-results-panel .cat-srch-item:hover{background:rgba(201,168,76,0.08);}
-.cat-srch-results-panel .cat-srch-tag{
-  font-size:.58rem;letter-spacing:.18em;text-transform:uppercase;
-  color:var(--gold);flex-shrink:0;min-width:70px;
-}
-.cat-srch-results-panel .cat-srch-name{color:var(--text);flex:1;}
-.cat-srch-results-panel .cat-srch-empty{
-  padding:22px 18px;text-align:center;color:var(--text-3);
-  font-family:'Nunito',sans-serif;font-size:.78rem;letter-spacing:.05em;
+@media(max-width:768px){
+  #catalog-overlay .cat-nav-bar{padding:0 16px;}
+  #catalog-overlay .cat-hero{padding-left:16px;padding-right:16px;}
+  #catalog-overlay .cat-filters{padding:0 16px;}
+  #catalog-overlay .cat-grid{padding:16px;}
+  #catalog-overlay .cat-section-head{padding-left:16px;padding-right:16px;}
+  #catalog-overlay .cat-footer{padding-left:16px;padding-right:16px;}
+  /* hide side BACK tab on mobile — mobile menu has its own back button */
+  #cat-back-btn{display:none !important;}
 }
