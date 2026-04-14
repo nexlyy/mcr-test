@@ -277,24 +277,35 @@ body{
   .eq-thumbs img{width:64px;height:48px;}
 }
 
-/* ═══════ SIDE BACK BUTTON on equipment page (same style as #cat-back-btn) ═══════ */
+/* ═══════ SIDE BACK BUTTON on equipment page ═══════ */
 #eq-back-btn{
-  position:fixed;left:0;top:50%;z-index:1001;
-  background:var(--gold);color:#0a0a0a;
-  font-family:'Nunito',sans-serif;
-  font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;font-weight:700;
-  padding:18px 14px;
-  cursor:pointer;border:none;
-  writing-mode:vertical-lr;
-  -webkit-transform:translateY(-50%) rotate(180deg);
-          transform:translateY(-50%) rotate(180deg);
-  -webkit-transition:padding .2s,background .2s;
-          transition:padding .2s,background .2s;
-  box-shadow:3px 0 24px rgba(201,168,76,.4);
-  border-radius:0 4px 4px 0;
-  white-space:nowrap;
+  position:fixed !important;
+  left:0 !important;
+  top:50% !important;
+  z-index:1001 !important;
+  display:block !important;
+  background:#c9a84c !important;
+  color:#0a0a0a !important;
+  font-family:'Nunito',sans-serif !important;
+  font-size:.8rem !important;
+  letter-spacing:.2em !important;
+  text-transform:uppercase !important;
+  font-weight:700 !important;
+  padding:22px 14px !important;
+  cursor:pointer !important;
+  border:none !important;
+  outline:none !important;
+  writing-mode:vertical-lr !important;
+  -webkit-transform:translateY(-50%) rotate(180deg) !important;
+          transform:translateY(-50%) rotate(180deg) !important;
+  -webkit-transition:padding .2s,background .2s !important;
+          transition:padding .2s,background .2s !important;
+  box-shadow:3px 0 24px rgba(201,168,76,.4) !important;
+  border-radius:0 4px 4px 0 !important;
+  white-space:nowrap !important;
+  text-decoration:none !important;
 }
-#eq-back-btn:hover{background:#b8943e;padding:22px 14px;}
+#eq-back-btn:hover{background:#b8943e !important;padding:26px 14px !important;}
 @media(max-width:768px){
-  #eq-back-btn{display:none;}
+  #eq-back-btn{display:none !important;}
 }

@@ -434,3 +434,83 @@ a.cat-card:hover .cat-card-link{gap:10px;}
   border-bottom:1px solid rgba(201,168,76,0.4);
 }
 .cat-card-partner a:hover{border-bottom-color:var(--gold);}
+
+/* ═══════ FIX: fully opaque catalog navbar (no content bleeding through) ═══════ */
+#catalog-overlay .cat-nav-bar{
+  background:#0a0a0a !important;
+  -webkit-backdrop-filter:none !important;
+          backdrop-filter:none !important;
+}
+html.light #catalog-overlay .cat-nav-bar{
+  background:#f0ede6 !important;
+}
+
+/* ═══════ Catalog desktop search input ═══════ */
+#cat-nav-search-wrap{
+  flex:1 1 auto;
+  max-width:460px;
+  margin:0 auto;
+  position:relative;
+  display:flex;align-items:center;
+  background:rgba(255,255,255,0.06);
+  border:1px solid var(--border);
+  border-radius:2px;
+  height:38px;
+  padding:0 14px;
+  transition:background .2s, border-color .2s;
+}
+#cat-nav-search-wrap:focus-within{
+  background:rgba(255,255,255,0.09);
+  border-color:var(--gold);
+}
+html.light #cat-nav-search-wrap{background:rgba(0,0,0,0.05);}
+html.light #cat-nav-search-wrap:focus-within{background:rgba(0,0,0,0.07);}
+#cat-nav-search-icon{
+  width:15px;height:15px;flex-shrink:0;
+  color:var(--text-3);margin-right:10px;
+}
+#cat-nav-search-input{
+  flex:1;background:none;border:none;outline:none;
+  color:var(--text);font-family:'Nunito',sans-serif;
+  font-size:.78rem;letter-spacing:.04em;
+  padding:0;min-width:0;
+}
+#cat-nav-search-input::placeholder{color:var(--text-3);}
+#cat-nav-search-clear{
+  background:none;border:none;color:var(--text-3);
+  font-size:1.15rem;line-height:1;cursor:pointer;
+  padding:0 0 0 8px;flex-shrink:0;
+}
+#cat-nav-search-clear:hover{color:var(--gold);}
+#cat-nav-search-results{
+  position:absolute;top:calc(100% + 6px);left:0;right:0;
+  background:#0a0a0a;
+  border:1px solid var(--border);border-top:2px solid var(--gold);
+  max-height:min(60vh,480px);overflow-y:auto;
+  display:none;
+  z-index:1200;
+  box-shadow:0 12px 32px rgba(0,0,0,.4);
+  text-align:left;
+}
+html.light #cat-nav-search-results{background:#f0ede6;}
+#cat-nav-search-results.open{display:block;}
+#cat-nav-search-results .cat-srch-item{
+  display:flex;align-items:center;gap:14px;
+  padding:12px 16px;
+  border-bottom:1px solid rgba(255,255,255,0.04);
+  text-decoration:none;color:var(--text);
+  font-family:'Nunito',sans-serif;font-size:.82rem;
+  transition:background .15s;
+}
+#cat-nav-search-results .cat-srch-item:hover{background:rgba(201,168,76,0.08);}
+#cat-nav-search-results .cat-srch-tag{
+  font-size:.58rem;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--gold);flex-shrink:0;min-width:74px;
+}
+#cat-nav-search-results .cat-srch-empty{
+  padding:22px 18px;text-align:center;color:var(--text-3);
+  font-family:'Nunito',sans-serif;font-size:.78rem;letter-spacing:.05em;
+}
+@media(max-width:900px){
+  #cat-nav-search-wrap{display:none;}
+}
