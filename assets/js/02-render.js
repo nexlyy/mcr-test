@@ -147,6 +147,10 @@ function applyUI() {
     k = els[i].getAttribute('data-i18n');
     if (t[k] !== undefined) els[i].innerHTML = t[k];
   }
+  /* Re-apply theme so that the Dark/Light Mode label gets re-translated */
+  if (typeof setTheme === 'function') {
+    try { setTheme(!!isLight); } catch(e){}
+  }
   /* Переводим placeholder */
   var ph = document.getElementById('nav-search-input');
   if (ph && t['ui.searchph']) ph.placeholder = t['ui.searchph'];

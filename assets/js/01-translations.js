@@ -238,7 +238,7 @@ var UI = {
     "ui.back":"Back to Expertise","div.construction":"Construction","div.recycling":"Recycling",
     "hero.tagline":"Engineering · Geology · Innovation",
     "hero.sub":"Mine<br>&middot;<br>Construction<br>&middot;<br>Recycling",
-    "ui.readmore":"Read full section →","ui.searchph":"Search services...",
+    "ui.readmore":"Read full section →","ui.searchph":"Search services...","ui.darkMode":"Dark Mode","ui.lightMode":"Light Mode","ui.backToMcr":"Back to MCR Planet",
     "ui.consent":"I have read and agree to the <a href=\"pages/privacy.html\" target=\"_blank\">Privacy Policy</a> and consent to the processing of my personal data.",
     "footer.privacy":"Privacy Policy","footer.terms":"Terms of Service"
   },
@@ -252,7 +252,7 @@ var UI = {
     "ui.back":"Volver a Especialidad","div.construction":"Construcción","div.recycling":"Reciclaje",
     "hero.tagline":"Ingeniería · Geología · Innovación",
     "hero.sub":"Minería<br>&middot;<br>Construcción<br>&middot;<br>Reciclaje",
-    "ui.readmore":"Leer sección completa →","ui.searchph":"Buscar servicios...",
+    "ui.readmore":"Leer sección completa →","ui.searchph":"Buscar servicios...","ui.darkMode":"Modo Oscuro","ui.lightMode":"Modo Claro","ui.backToMcr":"Volver a MCR Planet",
     "ui.consent":"He leído y acepto la <a href=\"pages/privacy.html\" target=\"_blank\">Política de Privacidad</a> y autorizo el tratamiento de mis datos personales.",
     "footer.privacy":"Política de Privacidad","footer.terms":"Términos de Servicio"
   },
@@ -266,7 +266,7 @@ var UI = {
     "ui.back":"Powrót do Specjalizacji","div.construction":"Budownictwo","div.recycling":"Recykling",
     "hero.tagline":"Inżynieria · Geologia · Innowacja",
     "hero.sub":"Górnictwo<br>&middot;<br>Budownictwo<br>&middot;<br>Recykling",
-    "ui.readmore":"Czytaj pełną sekcję →","ui.searchph":"Szukaj usług...",
+    "ui.readmore":"Czytaj pełną sekcję →","ui.searchph":"Szukaj usług...","ui.darkMode":"Tryb Ciemny","ui.lightMode":"Tryb Jasny","ui.backToMcr":"Powrót do MCR Planet",
     "ui.consent":"Przeczytałem/am i akceptuję <a href=\"pages/privacy.html\" target=\"_blank\">Politykę Prywatności</a> oraz wyrażam zgodę na przetwarzanie moich danych osobowych.",
     "footer.privacy":"Polityka Prywatności","footer.terms":"Regulamin"
   }
@@ -323,10 +323,27 @@ function setTheme(light) {
   var icon = light ? '\u2600' : '\u263e';
   var t1 = document.getElementById('themeThumb');
   var t2 = document.getElementById('mobileThemeThumb');
-  var lbl = document.getElementById('mobileThemeLabel');
+  var t3 = document.getElementById('catMobileThemeThumb');
+  var t4 = document.getElementById('cat-theme-thumb');
   if (t1) t1.innerHTML = icon;
   if (t2) t2.innerHTML = icon;
-  if (lbl) lbl.textContent = light ? 'Light Mode' : 'Dark Mode';
+  if (t3) t3.innerHTML = icon;
+  if (t4) t4.innerHTML = icon;
+  /* Localised theme label — falls back to English if UI not yet loaded */
+  var langKey = (typeof lang !== 'undefined' ? lang : 'en');
+  var tr = (typeof UI !== 'undefined' && UI[langKey]) ? UI[langKey] : null;
+  var label = light
+    ? (tr && tr['ui.lightMode'] ? tr['ui.lightMode'] : 'Light Mode')
+    : (tr && tr['ui.darkMode']  ? tr['ui.darkMode']  : 'Dark Mode');
+  var lbl  = document.getElementById('mobileThemeLabel');
+  var lbl2 = document.getElementById('catMobileThemeLabel');
+  if (lbl)  lbl.textContent  = label;
+  if (lbl2) lbl2.textContent = label;
+  /* Keep catalog checkboxes in sync visually */
+  var catCb = document.getElementById('cat-theme-cb');
+  if (catCb) catCb.checked = light;
+  var catMobCb = document.getElementById('catMobileThemeCheckbox');
+  if (catMobCb) catMobCb.checked = light;
 }
 
 
