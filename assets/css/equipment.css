@@ -276,3 +276,25 @@ body{
   .eq-specs-table th,.eq-specs-table td{padding:10px 12px;font-size:.75rem;}
   .eq-thumbs img{width:64px;height:48px;}
 }
+
+/* ═══════ SIDE BACK BUTTON on equipment page (same style as #cat-back-btn) ═══════ */
+#eq-back-btn{
+  position:fixed;left:0;top:50%;z-index:1001;
+  background:var(--gold);color:#0a0a0a;
+  font-family:'Nunito',sans-serif;
+  font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;font-weight:700;
+  padding:18px 14px;
+  cursor:pointer;border:none;
+  writing-mode:vertical-lr;
+  -webkit-transform:translateY(-50%) rotate(180deg);
+          transform:translateY(-50%) rotate(180deg);
+  -webkit-transition:padding .2s,background .2s;
+          transition:padding .2s,background .2s;
+  box-shadow:3px 0 24px rgba(201,168,76,.4);
+  border-radius:0 4px 4px 0;
+  white-space:nowrap;
+}
+#eq-back-btn:hover{background:#b8943e;padding:22px 14px;}
+@media(max-width:768px){
+  #eq-back-btn{display:none;}
+}

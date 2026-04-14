@@ -200,6 +200,7 @@ body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;-web
 
 
 
+}
 
 
 /* ══ КАТАЛОГ НАВБАР ══ */
@@ -433,44 +434,3 @@ a.cat-card:hover .cat-card-link{gap:10px;}
   border-bottom:1px solid rgba(201,168,76,0.4);
 }
 .cat-card-partner a:hover{border-bottom-color:var(--gold);}
-
-/* ═══════ FIX: mobile menu inside catalog overlay — above other overlay layers ═══════ */
-#catalog-overlay #catMobileNav{
-  z-index:1100 !important;
-}
-
-/* ═══════ Gema attribution on catalog cards ═══════ */
-.cat-card-partner{
-  margin-top:12px;padding-top:10px;
-  border-top:1px solid rgba(201,168,76,0.18);
-  font-family:'Nunito',sans-serif;font-size:.6rem;letter-spacing:.08em;
-  text-transform:uppercase;color:var(--text-3);
-}
-.cat-card-partner a{
-  color:var(--gold);text-decoration:none;
-  border-bottom:1px solid rgba(201,168,76,0.4);
-}
-.cat-card-partner a:hover{border-bottom-color:var(--gold);}
-
-/* ═══════ FIX: prevent horizontal scroll/overflow on mobile catalog ═══════ */
-html, body{overflow-x:hidden;max-width:100%;}
-#catalog-overlay{overflow-x:hidden;}
-#catalog-overlay *{max-width:100%;}
-#catalog-overlay .cat-hero,
-#catalog-overlay .cat-grid,
-#catalog-overlay .cat-section-head,
-#catalog-overlay .cat-footer,
-#catalog-overlay .cat-filters,
-#catalog-overlay .cat-nav-bar{
-  box-sizing:border-box;
-}
-@media(max-width:768px){
-  #catalog-overlay .cat-nav-bar{padding:0 16px;}
-  #catalog-overlay .cat-hero{padding-left:16px;padding-right:16px;}
-  #catalog-overlay .cat-filters{padding:0 16px;}
-  #catalog-overlay .cat-grid{padding:16px;}
-  #catalog-overlay .cat-section-head{padding-left:16px;padding-right:16px;}
-  #catalog-overlay .cat-footer{padding-left:16px;padding-right:16px;}
-  /* hide side BACK tab on mobile — mobile menu has its own back button */
-  #cat-back-btn{display:none !important;}
-}
