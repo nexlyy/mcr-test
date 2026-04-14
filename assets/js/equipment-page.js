@@ -129,15 +129,35 @@
 
     document.title = title + ' — MCR Planet';
 
-    /* === Хлебные крошки === */
+    /* === Хлебные крошки — клики ведут в каталог с нужным фильтром === */
+    var catalogHref = '../index.html#catalog';
+    var divHref     = '../index.html#catalog-' + divName; /* mine | recycling */
     document.getElementById('eq-crumbs').innerHTML =
       '<a href="../index.html">MCR Planet</a>' +
       '<span class="sep">/</span>' +
-      '<a href="../index.html#catalog" id="eq-crumbs-catalog">'+ t.catalogue +'</a>' +
+      '<a href="'+ catalogHref +'" id="eq-crumbs-catalog">'+ t.catalogue +'</a>' +
       '<span class="sep">/</span>' +
-      '<a href="../index.html#catalog" id="eq-crumbs-div">'+ divLabel +'</a>' +
+      '<a href="'+ divHref +'" id="eq-crumbs-div">'+ divLabel +'</a>' +
       '<span class="sep">/</span>' +
       '<span class="current">'+ title +'</span>';
+
+    /* === Localise side back button + hook its click === */
+    var backBtnEl = document.getElementById('eq-back-btn');
+    if (backBtnEl) backBtnEl.textContent = '← ' + t.back;
+    /* Global handler used by the side back button */
+    window.eqGoBack = function(){
+      /* If we came from the main page (= catalog was just open there),
+         go back in history so the catalog reopens from bfcache — no reload */
+      try {
+        var ref = document.referrer || '';
+        if (ref && ref.indexOf(location.host) !== -1 && ref.indexOf('/pages/equipment.html') === -1) {
+          window.history.back();
+          return;
+        }
+      } catch(e){}
+      /* Fallback: hard navigation to the catalog with the correct division */
+      window.location.href = '../index.html#catalog-' + (divName || 'all');
+    };
 
     /* === Hero: галерея + заголовок === */
     var galleryHtml = '<div class="eq-main-img" id="eq-main-img">';

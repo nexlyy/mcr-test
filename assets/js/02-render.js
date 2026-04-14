@@ -903,10 +903,14 @@ function boot() {
     safeInit();
     setTimeout(function(){ if(!window._typingDone){ window._typingDone=true; startTyping(); }}, 400);
 
-    /* Обработка #catalog хеша — открываем overlay каталога */
-    if (window.location.hash === '#catalog') {
+    /* Обработка #catalog / #catalog-mine / #catalog-recycling хеша */
+    var catHash = window.location.hash || '';
+    if (catHash === '#catalog' || catHash.indexOf('#catalog-') === 0) {
+      var filter = 'all';
+      if (catHash === '#catalog-mine') filter = 'mine';
+      else if (catHash === '#catalog-recycling') filter = 'recycling';
       setTimeout(function(){
-        if (typeof showCatalog === 'function') showCatalog('all');
+        if (typeof showCatalog === 'function') showCatalog(filter);
       }, 600);
     }
 
