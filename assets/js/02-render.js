@@ -891,16 +891,6 @@ function boot() {
   var goContact = params.get('contact') === '1';
   var interest = params.get('interest') || '';
 
-  /* FIX: чистим #overview и подобные хеши, чтобы страница всегда открывалась с шапки MCR PLANET */
-  var openCatalogOnBoot = (window.location.hash === '#catalog');
-  if (!goContact && window.location.hash && window.location.hash !== '#catalog' && window.location.hash !== '#contact') {
-    try { window.history.replaceState({}, '', window.location.pathname); } catch(e){}
-  }
-  /* Если открываем каталог сразу — скрываем главный контент пока каталог не показан */
-  if (openCatalogOnBoot) {
-    document.documentElement.classList.add('boot-catalog');
-  }
-
   if (!goContact) {
     window.scrollTo(0, 0);
   }
@@ -909,24 +899,15 @@ function boot() {
   }
   var ld = document.getElementById('loading');
   if (ld) ld.style.display = 'none';
-
-  /* FAST PATH: arriving via #catalog — skip preloader, init synchronously,
-     open catalog immediately so user never sees the main page flash */
-  if (openCatalogOnBoot) {
-    try { safeInit(); } catch(e){}
-    try { if (typeof showCatalog === 'function') showCatalog('all'); } catch(e){}
-    document.documentElement.classList.remove('boot-catalog');
-    return;
-  }
-
   runPreloader(function() {
     safeInit();
     setTimeout(function(){ if(!window._typingDone){ window._typingDone=true; startTyping(); }}, 400);
 
-    /* (legacy hash handler kept for safety) */
-    if (openCatalogOnBoot) {
-      if (typeof showCatalog === 'function') showCatalog('all');
-      document.documentElement.classList.remove('boot-catalog');
+    /* Обработка #catalog хеша — открываем overlay каталога */
+    if (window.location.hash === '#catalog') {
+      setTimeout(function(){
+        if (typeof showCatalog === 'function') showCatalog('all');
+      }, 600);
     }
 
     /* Обработка прихода с страницы оборудования: скролл к форме + предзаполнение */

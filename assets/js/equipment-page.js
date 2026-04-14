@@ -130,21 +130,6 @@
     document.title = title + ' — MCR Planet';
 
     /* === Хлебные крошки === */
-    var backBtn = document.getElementById('eq-back-btn');
-    if (backBtn) {
-      backBtn.textContent = '← ' + t.back;
-      /* If we came from the catalog, use history.back() to restore the catalog
-         exactly as it was — instant, no main-page flash */
-      backBtn.addEventListener('click', function(e){
-        try {
-          if (sessionStorage.getItem('mcr_came_from_catalog') === '1' && window.history.length > 1) {
-            e.preventDefault();
-            sessionStorage.removeItem('mcr_came_from_catalog');
-            window.history.back();
-          }
-        } catch(err){}
-      });
-    }
     document.getElementById('eq-crumbs').innerHTML =
       '<a href="../index.html">MCR Planet</a>' +
       '<span class="sep">/</span>' +

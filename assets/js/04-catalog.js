@@ -96,20 +96,6 @@ function renderCatalogue() {
       link.className = 'cat-card-link';
       link.textContent = viewLabels[cl] || viewLabels.en;
 
-      /* Gema attribution on each card */
-      var partner = null;
-      if (item.partner && (item.partner[cl] || item.partner.en)) {
-        partner = document.createElement('div');
-        partner.className = 'cat-card-partner';
-        partner.innerHTML = item.partner[cl] || item.partner.en;
-      }
-
-      /* Mark catalog as the previous page so the "back" button on the equipment
-         page can return us straight to the catalog without re-rendering main page */
-      card.addEventListener('click', function(){
-        try { sessionStorage.setItem('mcr_came_from_catalog','1'); } catch(e){}
-      });
-
       card.appendChild(imgWrap);
       var body = document.createElement('div');
       body.className = 'cat-card-body';
@@ -117,7 +103,12 @@ function renderCatalogue() {
       body.appendChild(t);
       body.appendChild(d);
       body.appendChild(link);
-      if (partner) body.appendChild(partner);
+      if (item.partner && (item.partner[cl] || item.partner.en)) {
+        var partner = document.createElement('div');
+        partner.className = 'cat-card-partner';
+        partner.innerHTML = item.partner[cl] || item.partner.en;
+        body.appendChild(partner);
+      }
       card.appendChild(body);
 
       grid.appendChild(card);
@@ -398,12 +389,12 @@ function catToggleMenu() {
   if (isOpen) {
     n.className = 'mobile-nav';
     b.className = 'burger';
-    document.body.classList.remove('cat-mobile-menu-open');
+    document.body.style.overflow = '';
   } else {
     catSyncUI();
     n.className = 'mobile-nav open';
     b.className = 'burger open';
-    document.body.classList.add('cat-mobile-menu-open');
+    document.body.style.overflow = 'hidden';
   }
 }
 
@@ -412,7 +403,7 @@ function catCloseMenu() {
   var n = document.getElementById('catMobileNav');
   if (b) b.className = 'burger';
   if (n) n.className = 'mobile-nav';
-  document.body.classList.remove('cat-mobile-menu-open');
+  document.body.style.overflow = '';
 }
 
 /* МОБИЛЬНЫЙ ПОИСК КАТАЛОГА */
@@ -582,105 +573,11 @@ function initCatModal() {
 
 /* ══ БУРГЕР КАТАЛОГА ══ */
 
-/* ═══════ FIX: actually initialise catalog modal / theme / language handlers ═══════ */
+/* FIX: actually invoke initCatModal so catalog theme/lang/burger handlers attach */
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', function(){
-    try { if (typeof initCatModal === 'function') initCatModal(); } catch(e){ console.warn('initCatModal failed', e); }
+    try { if (typeof initCatModal === 'function') initCatModal(); } catch(e){}
   });
 } else {
-  try { if (typeof initCatModal === 'function') initCatModal(); } catch(e){ console.warn('initCatModal failed', e); }
+  try { if (typeof initCatModal === 'function') initCatModal(); } catch(e){}
 }
-
-/* ═══════ Desktop catalog search (inline in cat-nav-bar) ═══════ */
-(function(){
-  function runDesktopSearch(q){
-    var wrap = document.getElementById('cat-nav-search-wrap');
-    var clearBtn = document.getElementById('cat-nav-search-clear');
-    if(clearBtn) clearBtn.style.display = (q && q.length) ? 'block' : 'none';
-
-    /* Create / reuse the results dropdown */
-    var rs = document.getElementById('cat-nav-search-results');
-    if(!rs){
-      rs = document.createElement('div');
-      rs.id = 'cat-nav-search-results';
-      rs.className = 'cat-srch-results-panel';
-      (wrap || document.body).appendChild(rs);
-    }
-    q = (q || '').trim().toLowerCase();
-    if(q.length < 1){ rs.classList.remove('open'); rs.innerHTML=''; return; }
-    if(typeof CATALOGUE === 'undefined'){ rs.classList.remove('open'); rs.innerHTML=''; return; }
-
-    var cl = (typeof lang !== 'undefined') ? lang : 'en';
-    var divLabels = {mine:{en:'Mine',es:'Minería',pl:'Górnictwo'},recycling:{en:'Recycling',es:'Reciclaje',pl:'Recykling'}};
-    var emptyMsg = {en:'No results',es:'Sin resultados',pl:'Brak wyników'};
-    var hits = [];
-    Object.keys(CATALOGUE).forEach(function(div){
-      (CATALOGUE[div]||[]).forEach(function(item){
-        var t  = item['title_'+cl] || item.title_en || '';
-        var d  = item['desc_'+cl]  || item.desc_en  || '';
-        var s  = item['short_'+cl] || item.short_en || '';
-        var hay = (t + ' ' + d + ' ' + s).toLowerCase();
-        if(hay.indexOf(q) > -1){ hits.push({div:div, item:item, title:t}); }
-      });
-    });
-    if(!hits.length){
-      rs.innerHTML = '<div class="cat-srch-empty">'+(emptyMsg[cl]||emptyMsg.en)+'</div>';
-    } else {
-      var html = '';
-      hits.forEach(function(h){
-        var lab = (divLabels[h.div][cl] || divLabels[h.div].en);
-        html += '<a class="cat-srch-item" href="pages/equipment.html?id='+encodeURIComponent(h.item.id||'')+'" data-div="'+h.div+'">'
-              + '<span class="cat-srch-tag">'+lab+'</span>'
-              + '<span class="cat-srch-name">'+h.title+'</span>'
-              + '</a>';
-      });
-      rs.innerHTML = html;
-      rs.querySelectorAll('.cat-srch-item').forEach(function(el){
-        el.addEventListener('click', function(){
-          try { sessionStorage.setItem('mcr_came_from_catalog','1'); } catch(e){}
-        });
-      });
-    }
-    rs.classList.add('open');
-  }
-
-  function bind(){
-    var input = document.getElementById('cat-nav-search-input');
-    if(!input || input._bound) return;
-    input._bound = true;
-    input.addEventListener('input', function(){ runDesktopSearch(this.value); });
-    input.addEventListener('focus', function(){ if(this.value) runDesktopSearch(this.value); });
-    input.addEventListener('keydown', function(e){ if(e.key==='Escape'){ this.value=''; runDesktopSearch(''); this.blur(); } });
-
-    var clearBtn = document.getElementById('cat-nav-search-clear');
-    if(clearBtn) clearBtn.addEventListener('click', function(){
-      input.value = ''; runDesktopSearch(''); input.focus();
-    });
-
-    /* Hide results when clicking outside */
-    document.addEventListener('click', function(e){
-      var rs = document.getElementById('cat-nav-search-results');
-      var wrap = document.getElementById('cat-nav-search-wrap');
-      if(rs && wrap && !wrap.contains(e.target) && !rs.contains(e.target)){
-        rs.classList.remove('open');
-      }
-    });
-
-    /* Localise placeholder when language changes */
-    var phs = {en:'Search equipment...', es:'Buscar equipos...', pl:'Szukaj sprzętu...'};
-    function syncPh(){
-      var cl = (typeof lang !== 'undefined') ? lang : 'en';
-      input.setAttribute('placeholder', phs[cl] || phs.en);
-    }
-    syncPh();
-    if(typeof setLang === 'function' && !setLang._catNavSearchWrapped){
-      var _origSetLang = setLang;
-      window.setLang = function(l){ _origSetLang(l); syncPh(); };
-      setLang._catNavSearchWrapped = true;
-    }
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', bind);
-  } else { bind(); }
-})();
