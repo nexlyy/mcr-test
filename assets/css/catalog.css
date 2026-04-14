@@ -514,3 +514,19 @@ html.light #cat-nav-search-results{background:#f0ede6;}
 @media(max-width:900px){
   #cat-nav-search-wrap{display:none;}
 }
+
+/* ═══════ FIX: catalog mobile menu — fully opaque, full-screen, high z-index ═══════ */
+#catMobileNav{
+  z-index:2000 !important;
+  background:#0a0a0a !important;
+  -webkit-backdrop-filter:none !important;
+  backdrop-filter:none !important;
+  top:0 !important;
+  left:0 !important;
+  right:0 !important;
+  bottom:0 !important;
+  padding-top:80px !important;
+}
+html.light #catMobileNav{
+  background:#f0ede6 !important;
+}

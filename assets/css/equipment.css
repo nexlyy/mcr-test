@@ -307,5 +307,10 @@ body{
 }
 #eq-back-btn:hover{background:#b8943e !important;padding:26px 14px !important;}
 @media(max-width:768px){
-  #eq-back-btn{display:none !important;}
+  #eq-back-btn{
+    font-size:.65rem !important;
+    padding:14px 9px !important;
+    letter-spacing:.15em !important;
+  }
+  #eq-back-btn:hover{padding:16px 9px !important;}
 }
