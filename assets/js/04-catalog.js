@@ -662,3 +662,19 @@ if (document.readyState === 'loading') {
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bind);
   else bind();
 })();
+
+/* ═══════ FIX: move #catMobileNav out of the transformed catalog overlay
+   so that position:fixed works correctly (transformed ancestors break fixed) ═══════ */
+(function(){
+  function moveMobileNav(){
+    var el = document.getElementById('catMobileNav');
+    if (el && el.parentElement && el.parentElement.id !== 'body-root') {
+      document.body.appendChild(el);
+    }
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', moveMobileNav);
+  } else {
+    moveMobileNav();
+  }
+})();
