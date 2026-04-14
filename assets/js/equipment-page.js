@@ -141,22 +141,19 @@
       '<span class="sep">/</span>' +
       '<span class="current">'+ title +'</span>';
 
-    /* === Localise side back button + hook its click === */
+    /* === Side back button: keep compact label "← BACK" === */
     var backBtnEl = document.getElementById('eq-back-btn');
-    if (backBtnEl) backBtnEl.textContent = '← ' + t.back;
+    if (backBtnEl) backBtnEl.textContent = '← BACK';
     /* Global handler used by the side back button */
     window.eqGoBack = function(){
-      /* If we came from the main page (= catalog was just open there),
-         go back in history so the catalog reopens from bfcache — no reload */
-      try {
-        var ref = document.referrer || '';
-        if (ref && ref.indexOf(location.host) !== -1 && ref.indexOf('/pages/equipment.html') === -1) {
-          window.history.back();
-          return;
-        }
-      } catch(e){}
-      /* Fallback: hard navigation to the catalog with the correct division */
-      window.location.href = '../index.html#catalog-' + (divName || 'all');
+      /* The catalog card click set a hash like #catalog-mine on the index page
+         before navigating, so history.back() restores that state naturally */
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        /* Fallback: direct navigation to catalog with correct division */
+        window.location.href = '../index.html#catalog-' + (divName || 'all');
+      }
     };
 
     /* === Hero: галерея + заголовок === */

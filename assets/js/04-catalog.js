@@ -64,6 +64,18 @@ function renderCatalogue() {
       card.className = 'cat-card ' + div;
       card.setAttribute('data-id', item.id || '');
       card.setAttribute('href', 'pages/equipment.html?id=' + encodeURIComponent(item.id || ''));
+      /* Before navigating, set a hash on the current page so history remembers
+         "catalog was open here", then window.history.back() from equipment page
+         restores it correctly. */
+      card.addEventListener('click', function(e){
+        if (e.ctrlKey || e.metaKey || e.shiftKey || e.button !== 0) return; /* new tab */
+        try {
+          var targetHash = '#catalog-' + div;
+          if (location.hash !== targetHash) {
+            history.replaceState(null, '', location.pathname + location.search + targetHash);
+          }
+        } catch(err){}
+      });
 
       /* Превью-картинка */
       var imgWrap = document.createElement('div');
@@ -581,3 +593,72 @@ if (document.readyState === 'loading') {
 } else {
   try { if (typeof initCatModal === 'function') initCatModal(); } catch(e){}
 }
+
+/* ═══════ Desktop catalog search (inline in cat-nav-bar) ═══════ */
+(function(){
+  function runSearch(q){
+    var rs = document.getElementById('cat-nav-search-results');
+    var clearBtn = document.getElementById('cat-nav-search-clear');
+    if (!rs) return;
+    if (clearBtn) clearBtn.style.display = (q && q.length) ? 'block' : 'none';
+    q = (q || '').trim().toLowerCase();
+    if (q.length < 1) { rs.classList.remove('open'); rs.innerHTML=''; return; }
+    if (typeof CATALOGUE === 'undefined') { rs.classList.remove('open'); return; }
+    var cl = (typeof lang !== 'undefined') ? lang : 'en';
+    var divLabels = {mine:{en:'Mine',es:'Minería',pl:'Górnictwo'},recycling:{en:'Recycling',es:'Reciclaje',pl:'Recykling'}};
+    var emptyMsg = {en:'No results',es:'Sin resultados',pl:'Brak wyników'};
+    var hits = [];
+    Object.keys(CATALOGUE).forEach(function(div){
+      (CATALOGUE[div]||[]).forEach(function(item){
+        var t  = item['title_'+cl] || item.title_en || '';
+        var d  = item['desc_'+cl]  || item.desc_en  || '';
+        var s  = item['short_'+cl] || item.short_en || '';
+        var hay = (t + ' ' + d + ' ' + s).toLowerCase();
+        if (hay.indexOf(q) > -1) hits.push({div:div, item:item, title:t});
+      });
+    });
+    if (!hits.length) {
+      rs.innerHTML = '<div class="cat-srch-empty">'+(emptyMsg[cl]||emptyMsg.en)+'</div>';
+    } else {
+      var html = '';
+      hits.forEach(function(h){
+        var lab = (divLabels[h.div] && (divLabels[h.div][cl] || divLabels[h.div].en)) || '';
+        html += '<a class="cat-srch-item" href="pages/equipment.html?id='+encodeURIComponent(h.item.id||'')+'">'
+              + '<span class="cat-srch-tag">'+lab+'</span>'
+              + '<span class="cat-srch-name">'+h.title+'</span>'
+              + '</a>';
+      });
+      rs.innerHTML = html;
+    }
+    rs.classList.add('open');
+  }
+  function bind(){
+    var input = document.getElementById('cat-nav-search-input');
+    if (!input || input._bound) return;
+    input._bound = true;
+    input.addEventListener('input', function(){ runSearch(this.value); });
+    input.addEventListener('focus', function(){ if (this.value) runSearch(this.value); });
+    input.addEventListener('keydown', function(e){ if (e.key==='Escape'){ this.value=''; runSearch(''); this.blur(); } });
+    var clearBtn = document.getElementById('cat-nav-search-clear');
+    if (clearBtn) clearBtn.addEventListener('click', function(){ input.value=''; runSearch(''); input.focus(); });
+    document.addEventListener('click', function(e){
+      var rs = document.getElementById('cat-nav-search-results');
+      var wrap = document.getElementById('cat-nav-search-wrap');
+      if (rs && wrap && !wrap.contains(e.target)) rs.classList.remove('open');
+    });
+    /* Localise placeholder when language changes */
+    var phs = {en:'Search equipment...', es:'Buscar equipos...', pl:'Szukaj sprzętu...'};
+    function syncPh(){
+      var cl = (typeof lang !== 'undefined') ? lang : 'en';
+      input.setAttribute('placeholder', phs[cl] || phs.en);
+    }
+    syncPh();
+    if (typeof setLang === 'function' && !setLang._catNavSearchWrapped) {
+      var _origSetLang = setLang;
+      window.setLang = function(l){ _origSetLang(l); syncPh(); };
+      setLang._catNavSearchWrapped = true;
+    }
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bind);
+  else bind();
+})();
