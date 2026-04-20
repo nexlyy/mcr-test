@@ -34,6 +34,7 @@
       not_found: 'Equipment not found',
       not_found_link: '← Back to catalogue',
       back: 'Back to catalogue',
+      back_short: '← Back',
       zoom_hint: 'Click to enlarge'
     },
     es: {
@@ -50,6 +51,7 @@
       not_found: 'Equipo no encontrado',
       not_found_link: '← Volver al catálogo',
       back: 'Volver al catálogo',
+      back_short: '← Volver',
       zoom_hint: 'Click para ampliar'
     },
     pl: {
@@ -66,6 +68,7 @@
       not_found: 'Sprzęt nie znaleziony',
       not_found_link: '← Powrót do katalogu',
       back: 'Powrót do katalogu',
+      back_short: '← Powrót',
       zoom_hint: 'Kliknij aby powiększyć'
     }
   };
@@ -141,9 +144,9 @@
       '<span class="sep">/</span>' +
       '<span class="current">'+ title +'</span>';
 
-    /* === Side back button: keep compact label "← BACK" === */
+    /* === Side back button: локализованный "← Back" / "← Volver" / "← Powrót" === */
     var backBtnEl = document.getElementById('eq-back-btn');
-    if (backBtnEl) backBtnEl.textContent = '← BACK';
+    if (backBtnEl) backBtnEl.textContent = t.back_short || '← Back';
     /* Global handler used by the side back button */
     window.eqGoBack = function(){
       /* The catalog card click set a hash like #catalog-mine on the index page
