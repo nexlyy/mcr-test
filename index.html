@@ -9,6 +9,16 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>MCR Planet</title>
+<!-- FAVICONS: золотое лого MCR -->
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<!-- SAFARI/iOS SCROLL FIX: форсируем начальный скролл в самый верх ДО рендера -->
+<script>
+  try { if ('scrollRestoration' in history) history.scrollRestoration = 'manual'; } catch(e){}
+  window.scrollTo(0, 0);
+  document.documentElement.scrollTop = 0;
+</script>
 <!-- Шрифты загружаются асинхронно — не блокируют рендер на iOS -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
