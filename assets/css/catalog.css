@@ -18,8 +18,8 @@
   position:fixed;left:0;top:50%;z-index:1001;
   background:#c9a84c;color:#0a0a0a;
   font-family:'Nunito',sans-serif;
-  font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;font-weight:700;
-  padding:20px 13px;
+  font-size:.78rem;letter-spacing:.22em;text-transform:uppercase;font-weight:700;
+  padding:24px 14px;
   cursor:pointer;border:none;outline:none;
   writing-mode:vertical-lr;
   -webkit-transform:translateY(-50%) rotate(180deg);
@@ -31,12 +31,12 @@
   white-space:nowrap;
   text-decoration:none;
 }
-#cat-back-btn:hover{background:#b8943e;padding:24px 13px;}
+#cat-back-btn:hover{background:#b8943e;padding:28px 14px;}
 #catalog-overlay.open ~ #cat-back-btn,
 body.catalog-open #cat-back-btn{display:block;}
 @media(max-width:768px){
-  #cat-back-btn{font-size:.62rem;padding:14px 9px;letter-spacing:.15em;}
-  #cat-back-btn:hover{padding:16px 9px;}
+  #cat-back-btn{font-size:.7rem;padding:20px 11px;letter-spacing:.2em;}
+  #cat-back-btn:hover{padding:22px 11px;}
 }
 
 

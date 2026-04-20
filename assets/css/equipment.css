@@ -287,11 +287,11 @@ body{
   background:#c9a84c !important;
   color:#0a0a0a !important;
   font-family:'Nunito',sans-serif !important;
-  font-size:.72rem !important;
-  letter-spacing:.2em !important;
+  font-size:.78rem !important;
+  letter-spacing:.22em !important;
   text-transform:uppercase !important;
   font-weight:700 !important;
-  padding:20px 13px !important;
+  padding:24px 14px !important;
   cursor:pointer !important;
   border:none !important;
   outline:none !important;
@@ -305,12 +305,12 @@ body{
   white-space:nowrap !important;
   text-decoration:none !important;
 }
-#eq-back-btn:hover{background:#b8943e !important;padding:24px 13px !important;}
+#eq-back-btn:hover{background:#b8943e !important;padding:28px 14px !important;}
 @media(max-width:768px){
   #eq-back-btn{
-    font-size:.62rem !important;
-    padding:14px 9px !important;
-    letter-spacing:.15em !important;
+    font-size:.7rem !important;
+    padding:20px 11px !important;
+    letter-spacing:.2em !important;
   }
-  #eq-back-btn:hover{padding:16px 9px !important;}
+  #eq-back-btn:hover{padding:22px 11px !important;}
 }
