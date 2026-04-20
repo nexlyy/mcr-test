@@ -553,13 +553,35 @@ function doParallax() {
 }
 
 /* ══════════════════════════════════════
-   ПРОГРЕСС-БАР
+   ПРОГРЕСС-БАР — работает и на главной, и в каталоге
    ══════════════════════════════════════ */
 function doProgress() {
   var bar=document.getElementById('spbar'); if(!bar) return;
-  var sy=window.pageYOffset||0, total=document.documentElement.scrollHeight-window.innerHeight;
-  bar.style.width=(total>0?(sy/total*100):0)+'%';
+  var overlay = document.getElementById('catalog-overlay');
+  var catOpen = overlay && overlay.classList.contains('open');
+  var sy, total;
+  if (catOpen) {
+    /* Когда каталог открыт — скролл идёт ВНУТРИ overlay */
+    sy = overlay.scrollTop || 0;
+    total = overlay.scrollHeight - overlay.clientHeight;
+  } else {
+    sy = window.pageYOffset || 0;
+    total = document.documentElement.scrollHeight - window.innerHeight;
+  }
+  bar.style.width = (total > 0 ? (sy / total * 100) : 0) + '%';
 }
+/* Привязываем scroll-listener к overlay каталога — чтобы прогресс-бар работал и там */
+(function(){
+  function attach(){
+    var o = document.getElementById('catalog-overlay');
+    if (o && !o._spbarAttached){
+      o.addEventListener('scroll', doProgress, {passive:true});
+      o._spbarAttached = true;
+    }
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', attach);
+  else attach();
+})();
 
 /* ══════════════════════════════════════
    SIDE NAV + СКРЫВАЮЩИЙСЯ НАВБАР
@@ -895,11 +917,22 @@ function boot() {
   var goContact = params.get('contact') === '1';
   var interest = params.get('interest') || '';
 
-  if (!goContact) {
-    window.scrollTo(0, 0);
-  }
+  /* SAFARI FIX: агрессивно сбрасываем позицию скролла.
+     Safari iOS/macOS восстанавливает прошлый scroll ПОСЛЕ события load даже при manual restoration.
+     Поэтому форсим scrollTo несколько раз в первые 300мс. */
   if (window.history && window.history.scrollRestoration) {
     window.history.scrollRestoration = 'manual';
+  }
+  var catHashEarly = window.location.hash || '';
+  var isCatHash = (catHashEarly === '#catalog' || catHashEarly.indexOf('#catalog-') === 0);
+  if (!goContact && !isCatHash) {
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    if (document.body) document.body.scrollTop = 0;
+    /* Повторяем через rAF + setTimeout для Safari */
+    try { requestAnimationFrame(function(){ window.scrollTo(0,0); }); } catch(e){}
+    setTimeout(function(){ window.scrollTo(0,0); document.documentElement.scrollTop=0; if(document.body) document.body.scrollTop=0; }, 50);
+    setTimeout(function(){ window.scrollTo(0,0); document.documentElement.scrollTop=0; if(document.body) document.body.scrollTop=0; }, 200);
   }
   var ld = document.getElementById('loading');
   if (ld) ld.style.display = 'none';
@@ -938,6 +971,22 @@ function boot() {
 }
 
 window.addEventListener('resize', function() { if (window.innerWidth > 768) closeMenu(); });
+
+/* SAFARI bfcache FIX: при возврате из back-forward cache Safari может восстановить
+   прежнюю позицию скролла и открыть страницу посреди контента (например, на "Our Expertise").
+   Форсим скролл наверх, кроме случая когда это возврат по catalog-хешу. */
+window.addEventListener('pageshow', function(e){
+  if (e.persisted) {
+    var h = window.location.hash || '';
+    if (h !== '#catalog' && h.indexOf('#catalog-') !== 0) {
+      try {
+        window.scrollTo(0, 0);
+        document.documentElement.scrollTop = 0;
+        if (document.body) document.body.scrollTop = 0;
+      } catch(err){}
+    }
+  }
+});
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', boot);
