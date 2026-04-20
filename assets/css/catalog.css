@@ -298,9 +298,7 @@ body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;-web
 .cat-srch-name{font-size:.78rem;color:var(--text);font-family:'Nunito',sans-serif;}
 .cat-srch-empty{padding:24px;text-align:center;color:var(--text-3);font-size:.75rem;font-family:'Nunito',sans-serif;}
 
-/* FLUID TYPOGRAPHY */
-html{font-size:clamp(15px, 1.05vw, 22px);}
-@media(max-width:768px){html{font-size:clamp(15px, 4vw, 17px);}}
+/* FLUID TYPOGRAPHY — определена в base.css чтобы работать на всех страницах */
 
 /* CONSENT CHECKBOX */
 .f-consent{display:flex;align-items:flex-start;gap:10px;margin:14px 0 18px;font-family:'Nunito',sans-serif;font-size:.7rem;line-height:1.55;color:var(--text-2);cursor:pointer;user-select:none;}
