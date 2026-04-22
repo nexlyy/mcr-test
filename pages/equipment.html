@@ -3,22 +3,36 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#c9a84c">
 <title>Equipment — MCR Planet</title>
 <meta name="description" content="MCR Planet equipment catalogue — industrial machinery for mining, recycling and construction.">
 <!-- FAVICONS: золотое лого MCR -->
 <link rel="icon" type="image/svg+xml" href="../favicon.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png">
 <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
-<!-- SAFARI/iOS SCROLL FIX -->
+<link rel="manifest" href="../manifest.json">
+<!-- EARLY BOOT: scroll-fix + theme detect -->
 <script>
   try { if ('scrollRestoration' in history) history.scrollRestoration = 'manual'; } catch(e){}
   window.scrollTo(0, 0);
   document.documentElement.scrollTop = 0;
-</script><link rel="preconnect" href="https://fonts.googleapis.com">
+  // Theme
+  try {
+    var savedTheme = localStorage.getItem('mcr_theme');
+    if (savedTheme === '1' || savedTheme === 'light') {
+      document.documentElement.className = 'light';
+    } else if (!savedTheme && window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+      document.documentElement.className = 'light';
+    }
+  } catch(e){}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/css/base.css">
 <link rel="stylesheet" href="../assets/css/equipment.css">
+<!-- jsPDF для генерации брошюр -->
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js" defer></script>
 </head>
 <body>
 
@@ -56,7 +70,13 @@
       <div class="eq-tag" id="eq-tag"></div>
       <h1 class="eq-title" id="eq-title"></h1>
       <p class="eq-lead" id="eq-lead"></p>
-      <a class="eq-cta" id="eq-cta-top" href="../index.html#contact">Request Information →</a>
+      <div class="eq-cta-group">
+        <a class="eq-cta" id="eq-cta-top" href="../index.html#contact">Request Information →</a>
+        <button class="eq-cta eq-cta-pdf" id="eq-pdf-btn" onclick="eqGeneratePDF()" type="button">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:-2px;margin-right:6px;"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM8 17h8v1.5H8V17zm0-3h8v1.5H8V14zm0-3h5v1.5H8V11z"/></svg>
+          <span id="eq-pdf-label">Download PDF</span>
+        </button>
+      </div>
     </div>
   </section>
 
@@ -86,5 +106,15 @@
 <!-- ════════ DATA + LOGIC ════════ -->
 <script src="../assets/js/catalog-data.js"></script>
 <script src="../assets/js/equipment-page.js"></script>
+<script src="../assets/js/eq-pdf.js"></script>
+
+<!-- Service Worker -->
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function(){
+      navigator.serviceWorker.register('/sw.js').catch(function(){});
+    });
+  }
+</script>
 </body>
 </html>
