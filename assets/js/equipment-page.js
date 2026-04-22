@@ -162,7 +162,7 @@
     /* === Hero: галерея + заголовок === */
     var galleryHtml = '<div class="eq-main-img" id="eq-main-img">';
     if (normImages.length) {
-      galleryHtml += '<img src="'+ normImages[0] +'" alt="'+ escapeAttr(title) +'" id="eq-main-img-tag">';
+      galleryHtml += '<img src="'+ normImages[0] +'" alt="'+ escapeAttr(title) +'" id="eq-main-img-tag" decoding="async">';
       galleryHtml += '<div class="eq-zoom-hint">'+ t.zoom_hint +'</div>';
     } else {
       galleryHtml += '<div style="color:var(--text-3);font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;">MCR Planet · Equipment</div>';
@@ -172,7 +172,7 @@
     if (normImages.length > 1) {
       galleryHtml += '<div class="eq-thumbs">';
       normImages.forEach(function(src, i){
-        galleryHtml += '<img src="'+ src +'" alt="" data-idx="'+ i +'"' + (i===0?' class="active"':'') + '>';
+        galleryHtml += '<img src="'+ src +'" alt="" data-idx="'+ i +'" loading="lazy" decoding="async"' + (i===0?' class="active"':'') + '>';
       });
       galleryHtml += '</div>';
     }

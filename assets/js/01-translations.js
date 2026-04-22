@@ -312,9 +312,9 @@ function smoothScrollTo(targetY) {
   }
 }
 
-var lang = 'en';
+var lang = (typeof window !== 'undefined' && window.__mcrLang) ? window.__mcrLang : 'en';
 var accOpen = {};
-var isLight = false;
+var isLight = (typeof document !== 'undefined' && document.documentElement.className === 'light');
 
 /* ── THEME ── */
 function setTheme(light) {

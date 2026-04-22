@@ -611,17 +611,42 @@ function doBTT() {
 }
 
 /* ══════════════════════════════════════
-   REVEAL АНИМАЦИИ
+   REVEAL АНИМАЦИИ — Intersection Observer (эффективнее scroll listener)
    ══════════════════════════════════════ */
+var _revealObserver = null;
 function doReveal() {
-  var els=document.querySelectorAll('.rv:not(.rvd)');
-  for(var i=0;i<els.length;i++){
-    if(els[i].getBoundingClientRect().top<window.innerHeight*.92) els[i].classList.add('rvd');
+  /* Fallback для старых браузеров без IntersectionObserver */
+  if (!('IntersectionObserver' in window)) {
+    var els = document.querySelectorAll('.rv:not(.rvd), .rv-left:not(.rvd), .rv-right:not(.rvd), .rv-scale:not(.rvd)');
+    for (var i = 0; i < els.length; i++) {
+      if (els[i].getBoundingClientRect().top < window.innerHeight * .92) els[i].classList.add('rvd');
+    }
+    return;
+  }
+  /* Создаём observer один раз */
+  if (!_revealObserver) {
+    _revealObserver = new IntersectionObserver(function(entries){
+      for (var i = 0; i < entries.length; i++) {
+        if (entries[i].isIntersecting) {
+          entries[i].target.classList.add('rvd');
+          _revealObserver.unobserve(entries[i].target);
+        }
+      }
+    }, {
+      rootMargin: '0px 0px -8% 0px',
+      threshold: 0.05
+    });
+  }
+  /* Регистрируем новые элементы */
+  var newEls = document.querySelectorAll('.rv:not(.rvd):not([data-rv-obs]), .rv-left:not(.rvd):not([data-rv-obs]), .rv-right:not(.rvd):not([data-rv-obs]), .rv-scale:not(.rvd):not([data-rv-obs])');
+  for (var j = 0; j < newEls.length; j++) {
+    newEls[j].setAttribute('data-rv-obs', '1');
+    _revealObserver.observe(newEls[j]);
   }
 }
 function addReveal() {
-  var tgts=document.querySelectorAll('.overview,.svc-section,.about,.contact,.stat,.div-card');
-  for(var i=0;i<tgts.length;i++) tgts[i].classList.add('rv');
+  var tgts = document.querySelectorAll('.overview,.svc-section,.about,.contact,.stat,.div-card');
+  for (var i = 0; i < tgts.length; i++) tgts[i].classList.add('rv');
 }
 
 /* ══════════════════════════════════════

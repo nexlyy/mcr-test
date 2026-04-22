@@ -85,6 +85,7 @@ function renderCatalogue() {
         img.src = itemImg;
         img.alt = itemTitle;
         img.loading = 'lazy';
+        img.decoding = 'async';
         imgWrap.appendChild(img);
       } else {
         imgWrap.classList.add('cat-card-img-empty');
@@ -177,17 +178,44 @@ function showCatalog(divFilter) {
         var allBtns = overlay.querySelectorAll('.cat-filter');
         for (var bi = 0; bi < allBtns.length; bi++) { allBtns[bi].className = 'cat-filter'; }
         btn.className = 'cat-filter active';
-        renderCatalogue();
+        showSkeleton();
+        setTimeout(renderCatalogue, 120);
       };
     })(filters[fi]);
   }
-  renderCatalogue();
+  /* Показываем skeleton пока каталог рендерится — плавный UX */
+  showSkeleton();
   overlay.className = 'open';
   document.body.classList.add('catalog-open');
   document.body.style.overflow = 'hidden';
   overlay.scrollTo(0, 0);
-  /* Синхронизируем тему и язык в overlay каталога */
-  if (typeof catSyncUI === 'function') catSyncUI();
+  /* Рендер с минимальной задержкой чтобы skeleton успел показаться */
+  setTimeout(function(){
+    renderCatalogue();
+    if (typeof catSyncUI === 'function') catSyncUI();
+  }, 150);
+}
+
+/* Показывает skeleton-карточки пока идёт рендер реальных данных */
+function showSkeleton() {
+  var content = document.getElementById('cat-content');
+  if (!content) return;
+  var html = '<div class="cat-skeleton-grid">';
+  for (var i = 0; i < 8; i++) {
+    html += '<div class="cat-skeleton">' +
+            '<div class="skel-img"></div>' +
+            '<div class="skel-body">' +
+              '<div class="skel-tag"></div>' +
+              '<div class="skel-title"></div>' +
+              '<div class="skel-title short"></div>' +
+              '<div class="skel-line"></div>' +
+              '<div class="skel-line"></div>' +
+              '<div class="skel-line short"></div>' +
+            '</div>' +
+            '</div>';
+  }
+  html += '</div>';
+  content.innerHTML = html;
 }
 
 function hideCatalog() {
