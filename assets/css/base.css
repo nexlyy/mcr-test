@@ -14,8 +14,13 @@ html.light {
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 /* FLUID TYPOGRAPHY — одинаковое масштабирование на всех страницах сайта */
-html{font-size:clamp(15px, 1.05vw, 22px);}
+html{font-size:clamp(15px, 1.05vw, 22px);scroll-behavior:smooth;}
 @media(max-width:768px){html{font-size:clamp(15px, 4vw, 17px);}}
+/* Убираем smooth-scroll для пользователей которые предпочитают меньше движения (accessibility) */
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto;}
+  .rv{transition:none !important;transform:none !important;opacity:1 !important;}
+}
 body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;font-weight:400;overflow-x:hidden;-webkit-font-smoothing:antialiased;-webkit-transition:background 0.3s,color 0.3s;transition:background 0.3s,color 0.3s;}
 
 /* LOADING — используем display:none сразу после fade, не зависим от CSS переменных */

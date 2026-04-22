@@ -34,8 +34,9 @@
 #search-results{max-height:400px;overflow-y:auto;}
 .search-item{padding:14px 24px;cursor:pointer;border-top:1px solid var(--border);display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;-webkit-align-items:center;align-items:center;gap:12px;-webkit-transition:background .15s;transition:background .15s;}
 .search-item:hover,.search-item:active{background:rgba(201,168,76,.08);}
-.search-item-tag{font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-family:'Nunito',sans-serif;font-weight:600;min-width:80px;}
-.search-item-name{font-size:.8rem;color:var(--text);font-family:'Nunito',sans-serif;}
+.search-item-icon{font-size:1.1rem;flex-shrink:0;width:24px;text-align:center;}
+.search-item-tag{font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-family:'Nunito',sans-serif;font-weight:600;min-width:90px;flex-shrink:0;}
+.search-item-name{font-size:.82rem;color:var(--text);font-family:'Nunito',sans-serif;flex:1;}
 .search-empty{padding:24px;text-align:center;color:var(--text-3);font-size:.75rem;font-family:'Nunito',sans-serif;}
 
 /* ══ 2. ХЛЕБНЫЕ КРОШКИ ══ */

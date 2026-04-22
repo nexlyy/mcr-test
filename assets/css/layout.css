@@ -247,6 +247,14 @@ body{cursor:url('data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST
 /* ── REVEAL ── */
 .rv{opacity:0;-webkit-transform:translateY(28px);transform:translateY(28px);-webkit-transition:opacity .65s ease,-webkit-transform .65s ease;transition:opacity .65s ease,transform .65s ease;}
 .rv.rvd{opacity:1;-webkit-transform:none;transform:none;}
+/* Варианты: .rv-left, .rv-right, .rv-scale, .rv-slow */
+.rv-left{opacity:0;transform:translateX(-40px);transition:opacity .7s ease,transform .7s ease;}
+.rv-left.rvd{opacity:1;transform:translateX(0);}
+.rv-right{opacity:0;transform:translateX(40px);transition:opacity .7s ease,transform .7s ease;}
+.rv-right.rvd{opacity:1;transform:translateX(0);}
+.rv-scale{opacity:0;transform:scale(.94);transition:opacity .6s ease,transform .6s cubic-bezier(.23,1,.32,1);}
+.rv-scale.rvd{opacity:1;transform:scale(1);}
+.rv-slow{transition-duration:1.1s !important;}
 
 /* ── MARQUEE ── */
 .mq-wrap{overflow:hidden;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:14px 0;}

@@ -118,6 +118,28 @@ body{
   text-decoration:none;
 }
 .eq-cta:hover{background:var(--gold);color:var(--bg);}
+.eq-cta-group{
+  display:flex;gap:12px;flex-wrap:wrap;
+  align-items:center;
+}
+.eq-cta-pdf{
+  background:transparent;
+  border:1px solid rgba(201,168,76,.45);
+  color:var(--gold);
+  padding:16px 24px;
+}
+.eq-cta-pdf:hover:not(:disabled){
+  background:var(--gold);color:var(--bg);
+  border-color:var(--gold);
+}
+.eq-cta-pdf:disabled{
+  opacity:.6;cursor:wait;
+}
+.eq-cta-pdf svg{fill:currentColor;}
+@media(max-width:640px){
+  .eq-cta-group{flex-direction:column;align-items:stretch;}
+  .eq-cta,.eq-cta-pdf{justify-content:center;padding:14px 20px;font-size:.6rem;}
+}
 
 /* === CONTENT BLOCK: features + specs === */
 .eq-content{
