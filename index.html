@@ -8,16 +8,62 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#c9a84c">
+<meta name="description" content="MCR Planet — industrial equipment for mining, construction and recycling. Engineering · Geology · Innovation.">
 <title>MCR Planet</title>
 <!-- FAVICONS: золотое лого MCR -->
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-<!-- SAFARI/iOS SCROLL FIX: форсируем начальный скролл в самый верх ДО рендера -->
+<!-- PWA manifest -->
+<link rel="manifest" href="manifest.json">
+<!-- EARLY BOOT: scroll-fix + language/theme detect до первого рендера -->
 <script>
   try { if ('scrollRestoration' in history) history.scrollRestoration = 'manual'; } catch(e){}
   window.scrollTo(0, 0);
   document.documentElement.scrollTop = 0;
+
+  // === Language detection ===
+  // Приоритет: 1) сохранённый выбор, 2) Accept-Language браузера, 3) EN
+  (function(){
+    try {
+      var saved = localStorage.getItem('mcr_lang');
+      if (saved && ['en','es','pl'].indexOf(saved) >= 0) {
+        window.__mcrLang = saved;
+        return;
+      }
+      var browserLangs = (navigator.languages || [navigator.language || 'en']).map(function(l){
+        return (l || '').toLowerCase().slice(0, 2);
+      });
+      // Маппинг: европейские испанские диалекты → es, польский → pl, всё остальное → en
+      for (var i = 0; i < browserLangs.length; i++) {
+        var l = browserLangs[i];
+        if (l === 'es') { window.__mcrLang = 'es'; return; }
+        if (l === 'pl') { window.__mcrLang = 'pl'; return; }
+        if (l === 'en') { window.__mcrLang = 'en'; return; }
+      }
+      window.__mcrLang = 'en';
+    } catch(e){ window.__mcrLang = 'en'; }
+  })();
+
+  // === Theme detection ===
+  // Приоритет: 1) сохранённый выбор, 2) prefers-color-scheme системы, 3) dark
+  (function(){
+    try {
+      var savedTheme = localStorage.getItem('mcr_theme');
+      if (savedTheme === '1' || savedTheme === 'light') {
+        document.documentElement.className = 'light';
+        return;
+      }
+      if (savedTheme === '0' || savedTheme === 'dark') {
+        return; // тёмная — по умолчанию
+      }
+      // Нет сохранённого — смотрим систему
+      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+        document.documentElement.className = 'light';
+      }
+    } catch(e){}
+  })();
 </script>
 <!-- Шрифты загружаются асинхронно — не блокируют рендер на iOS -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -225,6 +271,7 @@
 <script src="assets/js/03-search.js" defer></script>
 <script src="assets/js/catalog-data.js" defer></script>
 <script src="assets/js/04-catalog.js" defer></script>
+<script src="assets/js/05-global-search.js" defer></script>
 
 <!-- ПОИСК оверлей -->
 <div id="search-overlay">
@@ -400,6 +447,21 @@
   </div>
 </div>
 
+
+<!-- Fuse.js для глобального поиска (фазивый поиск по всем CONTENT) -->
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.min.js" defer></script>
+
+<!-- Service Worker registration для PWA -->
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function(){
+      navigator.serviceWorker.register('/sw.js').then(
+        function(reg){ console.log('SW registered:', reg.scope); },
+        function(err){ console.log('SW registration failed:', err); }
+      );
+    });
+  }
+</script>
 
 </body>
 </html>
